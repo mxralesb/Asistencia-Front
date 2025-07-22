@@ -1,0 +1,23 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginDocente from './pages/LoginDocente';
+import LoginDireccion from './pages/LoginDireccion';
+import DashboardDocente from './pages/DashboardDocente';
+import EscanearQR from './pages/EscanearQR';
+
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginDocente />} />
+        <Route path="/direccion" element={<LoginDireccion />} />
+        <Route path="/dashboard-docente" element={<DashboardDocente />} /> {}
+        <Route path="/docente/escanear" element={<EscanearQR />} />
+
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
