@@ -4,7 +4,7 @@ import LoginDocente from './pages/LoginDocente';
 import LoginDireccion from './pages/LoginDireccion';
 import DashboardDocente from './pages/DashboardDocente';
 import EscanearQR from './pages/EscanearQR';
-
+import PerfilDocente from './pages/PerfilDocente';
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
         <Route path="/direccion" element={<LoginDireccion />} />
         <Route path="/dashboard-docente" element={<DashboardDocente />} /> {}
         <Route path="/docente/escanear" element={<EscanearQR />} />
-
+        <Route path="/docente/mi-perfil" element={<PerfilDocente />} /> {} 
       </Routes>
     </Router>
   );

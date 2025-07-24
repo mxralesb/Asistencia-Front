@@ -1,5 +1,5 @@
 .dashboard-container {
-  background-color: #f9fafb;
+  background-color: #F4F8F7;
   padding: 2rem;
   min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
@@ -7,10 +7,51 @@
 
 .dashboard-header {
   text-align: center;
-  font-size: 2rem;
-  font-weight: bold;
-  color: #1f2937;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #005068;
   margin-bottom: 2rem;
+}
+
+.dashboard-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.dashboard-btn {
+  background-color: #5CD89F;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  color: white;
+  font-weight: 500;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  font-size: 0.95rem;
+}
+
+.dashboard-btn:hover {
+  background-color: #4CC08B;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-btn.logout {
+  background-color: #FF5C3E;
+}
+
+.dashboard-btn.logout:hover {
+  background-color: #e34d2d;
 }
 
 .card-grid {
@@ -20,33 +61,76 @@
 }
 
 .dashboard-card {
-  background: linear-gradient(to bottom right, #e0f2fe, #bae6fd);
+  background: linear-gradient(135deg, #E0F7EC, #C1F1DA);
   border-radius: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-left: 8px solid #5CD89F;
 }
 
 .dashboard-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-}
-
-.card-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #0c4a6e;
-  margin-top: 0.5rem;
-}
-
-.card-description {
-  font-size: 0.95rem;
-  color: #1e293b;
-  margin-top: 0.3rem;
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 }
 
 .card-icon {
   font-size: 2.5rem;
-  color: #0369a1;
+  color: #005068;
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #005068;
+  margin-top: 0.2rem;
+}
+
+.card-description {
+  font-size: 0.95rem;
+  color: #545454;
+  margin-top: 0.4rem;
+  line-height: 1.4;
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aplicar animación al contenedor y tarjetas */
+.dashboard-header {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.dashboard-card {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.3s;
+}
+
+/* Para aplicar el efecto a cada tarjeta con delay */
+.dashboard-card:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.dashboard-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.dashboard-card:nth-child(3) {
+  animation-delay: 0.6s;
+}
+.dashboard-card:nth-child(4) {
+  animation-delay: 0.8s;
 }
