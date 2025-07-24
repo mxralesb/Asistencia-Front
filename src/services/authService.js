@@ -14,6 +14,9 @@ export const login = async (correo, password, rol) => {
 
     if (!response.ok) throw new Error(data.message || 'Error de autenticación');
 
+    // Para guardar el tokern en el localStorage
+    localStorage.setItem('token', data.token);
+
     return data;
   } catch (error) {
     throw error;

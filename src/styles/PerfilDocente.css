@@ -53,3 +53,19 @@
   color: #005068;
   font-weight: bold;
 }
+
+
+.btn-volver {
+  background-color: #eee;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.btn-volver:hover {
+  background-color: #ddd;
+}

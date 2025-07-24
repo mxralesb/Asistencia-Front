@@ -1,58 +1,85 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getPerfilDocente, actualizarPerfilDocente } from '../services/docenteService';
+import { useNavigate } from 'react-router-dom';
 import '../styles/PerfilDocente.css';
 
 const PerfilDocente = () => {
-  const [docente, setDocente] = useState({
+  const navigate = useNavigate(); // ✅ MOVIDO AQUÍ
+
+  const [perfil, setPerfil] = useState({
     nombre: '',
-    correo: '',
-    telefono: ''
+    telefono: '',
+    direccion: '',
+    password: ''
   });
+
   const [mensaje, setMensaje] = useState('');
 
   useEffect(() => {
-    const cargarPerfil = async () => {
+    const obtenerPerfil = async () => {
       try {
-        const datos = await getPerfilDocente();
-        setDocente(datos);
+        const data = await getPerfilDocente();
+        setPerfil(prev => ({
+          ...prev,
+          nombre: data.nombre,
+          telefono: data.telefono || '',
+          direccion: data.direccion || ''
+        }));
       } catch (error) {
-        setMensaje('Error al cargar el perfil');
+        console.error('Error al cargar el perfil:', error.message);
       }
     };
 
-    cargarPerfil();
+    obtenerPerfil();
   }, []);
 
   const handleChange = (e) => {
-    setDocente({ ...docente, [e.target.name]: e.target.value });
+    setPerfil({
+      ...perfil,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await actualizarPerfilDocente(docente);
+      await actualizarPerfilDocente(perfil);
       setMensaje('Perfil actualizado correctamente');
     } catch (error) {
+      console.error('Error al actualizar el perfil:', error.message);
       setMensaje('Error al actualizar el perfil');
     }
   };
 
+  const handleVolver = () => {
+    navigate('/dashboard-docente');
+  };
+
+  if (!perfil.nombre) return <div>Cargando perfil...</div>;
+
   return (
     <div className="perfil-container">
-      <h2>Mi Perfil</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Nombre completo</label>
-        <input name="nombre" value={docente.nombre} onChange={handleChange} />
+      <button className="btn-volver" onClick={handleVolver}>← Volver al Dashboard</button>
 
-        <label>Correo</label>
-        <input name="correo" type="email" value={docente.correo} onChange={handleChange} />
+      <h2 className="perfil-title">Bienvenido, {perfil.nombre}</h2>
+      <form className="perfil-form" onSubmit={handleSubmit}>
+        <label>
+          Teléfono:
+          <input type="text" name="telefono" value={perfil.telefono} onChange={handleChange} />
+        </label>
 
-        <label>Teléfono</label>
-        <input name="telefono" value={docente.telefono || ''} onChange={handleChange} />
+        <label>
+          Dirección:
+          <input type="text" name="direccion" value={perfil.direccion} onChange={handleChange} />
+        </label>
 
-        <button type="submit">Guardar cambios</button>
+        <label>
+          Nueva Contraseña:
+          <input type="password" name="password" value={perfil.password} onChange={handleChange} />
+        </label>
+
+        <button className="btn-actualizar" type="submit">Guardar cambios</button>
       </form>
-
       {mensaje && <p className="mensaje">{mensaje}</p>}
     </div>
   );

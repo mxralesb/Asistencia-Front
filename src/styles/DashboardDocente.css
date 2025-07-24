@@ -61,7 +61,7 @@
 }
 
 .dashboard-card {
-  background: linear-gradient(135deg, #E0F7EC, #C1F1DA);
+  background-color: 8px solid #497c9e;
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -70,7 +70,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  border-left: 8px solid #5CD89F;
+  border-left: 8px solid #497c9e;
 }
 
 .dashboard-card:hover {
