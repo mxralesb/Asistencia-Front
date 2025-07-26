@@ -1,0 +1,61 @@
+.direccion-dashboard-container {
+  background-color: #F5F5F5;
+  padding: 2rem;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.direccion-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.direccion-header h1 {
+  font-size: 2.5rem;
+  color: #3E3E3E;
+  margin-bottom: 0.5rem;
+}
+
+.direccion-header p {
+  font-size: 1.2rem;
+  color: #4D9DE0;
+}
+
+.direccion-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.direccion-card {
+  background-color: #FFD6A5;
+  border-left: 8px solid #FF6B6B;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.direccion-card h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #3E3E3E;
+}
+
+.direccion-card p {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: #3E3E3E;
+}
+
+.direccion-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.direccion-card.logout {
+  background-color: #FF6B6B;
+  color: white;
+  border-left-color: #C0392B;
+}

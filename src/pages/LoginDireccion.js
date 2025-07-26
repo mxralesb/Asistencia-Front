@@ -15,7 +15,7 @@ const LoginDireccion = () => {
     try {
       const data = await login(correo, password, 'direccion');
       localStorage.setItem('token', data.token);
-      navigate('/dashboard-direccion'); // <- Asegúrate que esta ruta exista
+      navigate('/dashboard-direccion'); 
     } catch (err) {
       setError(err.message);
     }
