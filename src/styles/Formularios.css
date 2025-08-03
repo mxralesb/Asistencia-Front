@@ -1,0 +1,55 @@
+.formulario-container {
+  max-width: 500px;
+  margin: 3rem auto;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.formulario-titulo {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #005068;
+  margin-bottom: 1.5rem;
+}
+
+.formulario label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.formulario input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  margin-top: 0.3rem;
+  font-size: 1rem;
+}
+
+.btn-enviar {
+  background-color: #5CD89F;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  color: white;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 1rem;
+}
+
+.btn-enviar:hover {
+  background-color: #42c18d;
+}
+
+.mensaje {
+  margin-top: 1rem;
+  text-align: center;
+  color: #005068;
+  font-weight: bold;
+}

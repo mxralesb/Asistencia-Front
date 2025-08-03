@@ -6,6 +6,9 @@ import DashboardDocente from './pages/DashboardDocente';
 import DashboardDireccion from './pages/DashboardDireccion';
 import EscanearQR from './pages/EscanearQR';
 import PerfilDocente from './pages/PerfilDocente';
+import RegistroDocente from './pages/RegistroDocente';
+import ListaDocentes from './pages/ListaDocentes';
+
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
         <Route path="/dashboard-direccion" element={<DashboardDireccion />} /> {}
         <Route path="/docente/escanear" element={<EscanearQR />} />
         <Route path="/docente/mi-perfil" element={<PerfilDocente />} /> {} 
+        <Route path="/registro-docente" element={<RegistroDocente />} /> {}
+        <Route path="/lista-docentes" element={<ListaDocentes />} />
+
       </Routes>
     </Router>
   );
