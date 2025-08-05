@@ -1,0 +1,76 @@
+.registro-alumno {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #f5f9ff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.registro-alumno h2 {
+  text-align: center;
+  color: #004080;
+  margin-bottom: 25px;
+}
+
+.registro-alumno form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.registro-alumno input[type="text"],
+.registro-alumno select {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  background-color: #fff;
+}
+
+.registro-alumno label {
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.registro-alumno button {
+  padding: 10px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.registro-alumno button:hover {
+  background-color: #004f99;
+}
+
+.qr-preview {
+  margin-top: 30px;
+  text-align: center;
+  background-color: #e9f2ff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.qr-preview img {
+  margin: 15px auto;
+  display: block;
+  max-width: 200px;
+}
+
+.qr-preview a button {
+  background-color: #28a745;
+  margin-top: 10px;
+}
+
+.qr-preview a button:hover {
+  background-color: #1e7e34;
+}

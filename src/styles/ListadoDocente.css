@@ -1,0 +1,124 @@
+.lista-docentes {
+  padding: 40px 20px;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.lista-docentes h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+.tarjetas-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+
+.tarjeta-docente {
+  width: 300px;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 20px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 6px solid #4caf50;
+}
+
+.tarjeta-docente:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.tarjeta-docente.inactivo {
+  border-left-color: #f44336;
+  opacity: 0.7;
+}
+
+.tarjeta-docente h3 {
+  margin-bottom: 6px;
+  font-size: 20px;
+  color: #34495e;
+}
+
+.tarjeta-docente p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.estado {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.estado.activo::before {
+  content: '🟢 ';
+}
+
+.estado.inactivo::before {
+  content: '🔴 ';
+}
+
+.btn-activar,
+.btn-desactivar {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 14px;
+  transition: background 0.3s ease;
+}
+
+.btn-activar {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-activar:hover {
+  background-color: #3e8e41;
+}
+
+.btn-desactivar {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-desactivar:hover {
+  background-color: #d32f2f;
+}
+.btn-volver {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-volver:hover {
+  background-color: #2c80b4;
+}
+
+.filtros-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.input-filtro {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 200px;
+}

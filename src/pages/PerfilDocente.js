@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/PerfilDocente.css';
 
 const PerfilDocente = () => {
-  const navigate = useNavigate(); // ✅ MOVIDO AQUÍ
+  const navigate = useNavigate(); 
 
   const [perfil, setPerfil] = useState({
     nombre: '',

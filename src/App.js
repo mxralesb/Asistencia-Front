@@ -8,6 +8,9 @@ import EscanearQR from './pages/EscanearQR';
 import PerfilDocente from './pages/PerfilDocente';
 import RegistroDocente from './pages/RegistroDocente';
 import ListaDocentes from './pages/ListaDocentes';
+import RegistrarAlumno from './pages/RegistrarAlumno'; 
+import ConsultaAlumnos from './pages/ConsultaAlumnos';
+import ListaAlumnos from './pages/ListaAlumnos';
 
 
 function App() {
@@ -22,6 +25,9 @@ function App() {
         <Route path="/docente/mi-perfil" element={<PerfilDocente />} /> {} 
         <Route path="/registro-docente" element={<RegistroDocente />} /> {}
         <Route path="/lista-docentes" element={<ListaDocentes />} />
+       <Route path="/registrar-alumnos" element={<RegistrarAlumno />} />
+        <Route path="/consulta-alumnos" element={<ConsultaAlumnos />} />
+         <Route path="/alumnos" element={<ListaAlumnos />} />
 
       </Routes>
     </Router>
