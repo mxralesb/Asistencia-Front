@@ -1,0 +1,170 @@
+/* Contenedor general del formulario */
+.form-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background-color: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(99, 81, 162, 0.15); /* sombra morada suave */
+  font-family: 'Segoe UI', sans-serif;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Título */
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #5b3b8a; /* morado oscuro */
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+/* Agrupación de campos */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Etiquetas */
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #4a3e71; /* morado medio */
+  font-size: 1rem;
+}
+
+/* Inputs y selects */
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1.5px solid #b7a7d8; /* borde morado claro */
+  border-radius: 12px;
+  font-size: 1.05rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  color: #4a3e71; /* texto morado medio */
+  background-color: #f4f1fa; /* fondo muy claro morado */
+  font-weight: 500;
+}
+
+.form-group input::placeholder {
+  color: #9c8fc0; /* placeholder morado suave */
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #6e57d1; /* morado vivo para foco */
+  box-shadow: 0 0 0 4px rgba(110, 87, 209, 0.3);
+  background-color: #fff;
+}
+
+/* Botón principal */
+.btn-submit {
+  display: block;
+  width: 100%;
+  padding: 0.85rem;
+  font-size: 1.1rem;
+  background-color: #6e57d1; /* morado vivo */
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(110, 87, 209, 0.4);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #563dbf; /* morado más oscuro */
+  box-shadow: 0 8px 20px rgba(86, 61, 191, 0.6);
+}
+
+/* Mensajes de éxito o error */
+.message {
+  margin-top: 1.2rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.message.success {
+  background-color: #e4e0f7; /* morado claro */
+  color: #3a2a75; /* morado oscuro */
+  box-shadow: 0 4px 10px rgba(58, 42, 117, 0.3);
+}
+
+.message.error {
+  background-color: #f4e1f1; /* rosa muy suave */
+  color: #a94442;
+  box-shadow: 0 4px 10px rgba(169, 68, 66, 0.3);
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .form-container {
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem auto;
+  }
+}
+
+/* Estilos para inputs de texto, email, teléfono, etc. */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"] {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #c6bff3;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background-color: white;
+  color: #5b3b8a;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="tel"]:focus {
+  outline: none;
+  border-color: #6e57d1;
+  box-shadow: 0 0 8px rgba(110, 87, 209, 0.3);
+  background-color: #f4f1fa;
+}
+
+/* Estilos SOLO para los selects */
+.form-group select {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1.8px solid #c6bff3;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  appearance: none; /* Quitar flecha nativa */
+  background-color: white;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'12'%20height%3D'7'%20viewBox%3D'0%200%2012%207'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M6%207L0%200h12L6%207z'%20fill%3D'%236e57d1'%20/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 12px 7px;
+  cursor: pointer;
+  color: #5b3b8a;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: #6e57d1;
+  box-shadow: 0 0 8px rgba(110, 87, 209, 0.4);
+  background-color: #f4f1fa;
+}

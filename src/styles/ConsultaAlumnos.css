@@ -1,62 +1,136 @@
 .consulta-alumnos {
   max-width: 800px;
-  margin: 40px auto;
-  padding: 30px;
-  background-color: #f7fcff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', sans-serif;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(91, 59, 138, 0.15);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #4b347d;
+  animation: fadeInUp 0.8s ease forwards;
 }
 
 .consulta-alumnos h2 {
   text-align: center;
-  margin-bottom: 20px;
-  color: #003366;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 1.8rem;
+  color: #5b3b8a;
 }
 
 .filtros {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
   justify-content: center;
 }
 
 .filtros input {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  width: 200px;
+  flex: 1 1 200px;
+  padding: 0.6rem 1rem;
+  border: 1.5px solid #cbb9e3;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #4b347d;
+  background-color: #f9f7fc;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filtros input:focus {
+  outline: none;
+  border-color: #6f42c1;
+  box-shadow: 0 0 8px rgba(111, 66, 193, 0.5);
+  background-color: #fff;
 }
 
 .filtros button {
-  background-color: #0066cc;
-  color: white;
-  padding: 8px 14px;
+  background: linear-gradient(135deg, #6f42c1, #a26dd9);
   border: none;
-  border-radius: 6px;
+  padding: 0 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 12px;
   cursor: pointer;
-  transition: 0.3s ease;
+  box-shadow: 0 8px 20px rgba(111, 66, 193, 0.4);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
 }
 
 .filtros button:hover {
-  background-color: #004b99;
+  background: linear-gradient(135deg, #5a2eac, #8a52c9);
+  box-shadow: 0 10px 30px rgba(90, 46, 172, 0.6);
 }
 
+/* Tabla */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
-  background-color: white;
+  font-size: 1rem;
+  color: #4b347d;
+  user-select: none;
 }
 
-table th, table td {
-  border: 1px solid #ccc;
-  padding: 10px;
+thead {
+  background-color: #a26dd9;
+  color: white;
+  border-radius: 1rem 1rem 0 0;
+}
+
+thead th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 700;
+}
+
+tbody tr {
+  background-color: #f9f7fc;
+  border-bottom: 1px solid #cbb9e3;
+  transition: background-color 0.3s ease;
+  cursor: default;
+}
+
+tbody tr:hover {
+  background-color: #e1d5f7;
+}
+
+tbody td {
+  padding: 0.85rem 1rem;
+}
+
+/* Mensaje cuando no hay datos */
+.consulta-alumnos p {
   text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #7a5fbf;
+  margin-top: 2rem;
 }
 
-table th {
-  background-color: #e6f2ff;
-  color: #003366;
+/* Animación fadeInUp */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .filtros {
+    flex-direction: column;
+  }
+
+  .filtros input, .filtros button {
+    width: 100%;
+  }
+
+  thead th, tbody td {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.9rem;
+  }
 }

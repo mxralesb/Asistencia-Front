@@ -31,13 +31,13 @@ const DashboardDireccion = () => {
   <div className="dashboard-card" onClick={irA('/registro-docente')}>
     <FaUserEdit className="card-icon" />
     <h2 className="card-title">Registrar Docentes</h2>
-    <p className="card-description">Agregar, editar o eliminar docentes.</p>
+    <p className="card-description">Agregar docentes.</p>
   </div>
 
     <div className="dashboard-card" onClick={irA('/lista-docentes')}>
     <FaChalkboardTeacher className="card-icon" />
     <h2 className="card-title">Lista de Docentes</h2>
-    <p className="card-description">Ver docentes registrados en el sistema.</p>
+    <p className="card-description">Ver y editar los docentes registrados.</p>
   </div>
 
 

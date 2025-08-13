@@ -1,24 +1,30 @@
+/* Contenedor principal */
 .dashboard-container {
-  background-color: #F4F8F7;
+  background-color: #f5f3fa; /* morado muy claro */
   padding: 2rem;
   min-height: 100vh;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Header */
+.dashboard-header-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
 .dashboard-header {
-  text-align: center;
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 700;
-  color: #005068;
-  margin-bottom: 2rem;
-}
-
-.dashboard-header-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
+  color: #5b3b8a; /* morado oscuro */
+  flex-grow: 1;
+  margin: 0;
+  animation: fadeInUp 0.8s ease forwards;
 }
 
 .dashboard-actions {
@@ -27,75 +33,97 @@
 }
 
 .dashboard-btn {
-  background-color: #5CD89F;
+  background-color: #7c6adf; /* morado principal */
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 1.4rem;
   color: white;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 10px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(124, 106, 223, 0.5);
+  font-size: 1rem;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  user-select: none;
 }
 
-.dashboard-btn:hover {
-  background-color: #4CC08B;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+.dashboard-btn:hover,
+.dashboard-btn:focus {
+  background-color: #5e4fc1; /* morado más oscuro */
+  box-shadow: 0 6px 12px rgba(94, 79, 193, 0.6);
+  outline: none;
 }
 
 .dashboard-btn.logout {
-  background-color: #FF5C3E;
+  background-color: #b5599d; /* morado rojizo para logout */
 }
 
-.dashboard-btn.logout:hover {
-  background-color: #e34d2d;
+.dashboard-btn.logout:hover,
+.dashboard-btn.logout:focus {
+  background-color: #963f82;
 }
 
-.direccion-card-grid {
+/* Iconos en botones */
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+/* Grid de tarjetas */
+.card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.8rem;
 }
 
-.direccion-card {
+/* Tarjetas */
+.dashboard-card {
   background-color: white;
   border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  padding: 1.8rem 1.6rem;
+  box-shadow: 0 4px 12px rgba(92, 74, 168, 0.1);
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  border-left: 8px solid #497c9e;
+  border-left: 8px solid #7c6adf;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
 }
 
-.direccion-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+.dashboard-card:hover,
+.dashboard-card:focus {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(124, 106, 223, 0.3);
+  outline: none;
 }
 
+.dashboard-card:focus {
+  border-left-color: #5e4fc1;
+}
+
+/* Icono principal de la tarjeta */
 .card-icon {
-  font-size: 2.5rem;
-  color: #005068;
-  margin-bottom: 0.5rem;
+  font-size: 3rem;
+  color: #5b3b8a;
+  margin-bottom: 0.7rem;
+  flex-shrink: 0;
 }
 
+/* Título y descripción */
 .card-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #005068;
-  margin-top: 0.2rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #5b3b8a;
+  margin: 0 0 0.4rem 0;
 }
 
 .card-description {
-  font-size: 0.95rem;
-  color: #545454;
-  margin-top: 0.4rem;
+  font-size: 1rem;
+  color: #6b5d8b;
   line-height: 1.4;
+  margin: 0;
 }
 
 /* Animación de entrada */
@@ -110,25 +138,30 @@
   }
 }
 
-.dashboard-header {
-  animation: fadeInUp 0.8s ease forwards;
-}
+/* Responsive */
+@media (max-width: 600px) {
+  .dashboard-header {
+    font-size: 1.8rem;
+  }
 
-.direccion-card {
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards;
-  animation-delay: 0.3s;
-}
+  .dashboard-btn {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
 
-.direccion-card:nth-child(1) {
-  animation-delay: 0.2s;
-}
-.direccion-card:nth-child(2) {
-  animation-delay: 0.4s;
-}
-.direccion-card:nth-child(3) {
-  animation-delay: 0.6s;
-}
-.direccion-card:nth-child(4) {
-  animation-delay: 0.8s;
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card {
+    padding: 1.4rem 1.2rem;
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+  }
+
+  .card-title {
+    font-size: 1.3rem;
+  }
 }
