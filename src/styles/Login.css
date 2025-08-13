@@ -6,16 +6,26 @@
   align-items: center;
   justify-content: center;
   padding: 15px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Tarjeta del login */
-.login-card {
+/* Contenedor de tarjetas para animación de slide */
+.login-container {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 840px; /* 2x ancho de tarjeta para slide */
+}
+
+/* Tarjeta del login y cambio de contraseña */
+.login-card,
+.cambio-password-card {
   background: #fff;
   padding: 35px 30px;
   border-radius: 15px;
-  width: 100%;
-  max-width: 420px;
+  width: 420px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
   animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -47,7 +57,7 @@
   border: 1px solid #ccc;
   outline: none;
   font-size: 1rem;
-  transition: border 0.2s ease-in-out;
+  transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .input-group input:focus {
@@ -66,11 +76,19 @@
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.25s ease-in-out;
+  transition: background 0.25s ease-in-out, transform 0.2s ease;
 }
 
 .login-btn:hover {
   background: #5e35b1;
+  transform: scale(1.02);
+}
+
+/* Siempre activo */
+.login-btn:disabled {
+  background: #7e57c2; /* Igual que normal */
+  opacity: 1;
+  cursor: pointer;
 }
 
 /* Error */
@@ -81,7 +99,7 @@
   text-align: center;
 }
 
-/* Alternativa */
+/* Alternativa / link */
 .login-alt {
   text-align: center;
   font-size: 0.9rem;
@@ -98,6 +116,7 @@
   text-decoration: underline;
 }
 
+/* Password */
 .password-group {
   position: relative;
 }
@@ -126,8 +145,7 @@
   color: #5e35b1;
 }
 
-
-/* Animación */
+/* Animación fade */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -139,7 +157,7 @@
   }
 }
 
-/* Botón flotante en esquina inferior derecha */
+/* Botón flotante */
 .guide-floating-btn {
   position: fixed;
   bottom: 20px;
@@ -229,4 +247,40 @@
 
 .guide-close:hover {
   color: #333;
+}
+
+/* Cambio de contraseña (primer ingreso) */
+.cambio-password-card {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.cambio-password-card input {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.cambio-password-card input:focus {
+  border-color: #7e57c2;
+  box-shadow: 0 0 5px rgba(126, 87, 194, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .login-card,
+  .cambio-password-card {
+    padding: 30px 20px;
+    width: 100%;
+  }
+
+  .login-container {
+    width: 100%;
+    flex-direction: column;
+  }
 }
