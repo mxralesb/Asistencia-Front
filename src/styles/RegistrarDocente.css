@@ -152,7 +152,7 @@
   border-radius: 12px;
   font-size: 1rem;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  appearance: none; /* Quitar flecha nativa */
+  appearance: none; 
   background-color: white;
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'12'%20height%3D'7'%20viewBox%3D'0%200%2012%207'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M6%207L0%200h12L6%207z'%20fill%3D'%236e57d1'%20/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -167,4 +167,55 @@
   border-color: #6e57d1;
   box-shadow: 0 0 8px rgba(110, 87, 209, 0.4);
   background-color: #f4f1fa;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  text-align: left;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+.modal-content h3 {
+  margin-bottom: 15px;
+  color: #5e35b1;
+}
+
+.modal-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+}
+
+.modal-content li {
+  margin-bottom: 8px;
+}
+
+.modal-content button {
+  background: #7e57c2;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background: #5e35b1;
 }

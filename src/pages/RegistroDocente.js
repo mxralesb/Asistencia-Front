@@ -35,59 +35,52 @@ const RegistrarDocente = () => {
 
   const [errorCorreo, setErrorCorreo] = useState('');
   const [errorTelefono, setErrorTelefono] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [docenteGuardado, setDocenteGuardado] = useState(null);
 
-  const validarCorreoGmail = (email) => {
-    const regex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-    return regex.test(email);
-  };
-
-  const validarTelefono = (telefono) => {
-    const regex = /^\d{0,8}$/; // Solo dígitos, máximo 8 caracteres
-    return regex.test(telefono);
-  };
+  const validarCorreoGmail = (email) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+  const validarTelefono = (telefono) => /^\d{0,8}$/.test(telefono);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === 'correo') {
-      setForm((prev) => ({ ...prev, correo: value }));
-      if (!validarCorreoGmail(value)) {
-        setErrorCorreo('El correo debe ser un Gmail válido (terminado en @gmail.com)');
-      } else {
-        setErrorCorreo('');
-      }
+      setForm(prev => ({ ...prev, correo: value }));
+      setErrorCorreo(validarCorreoGmail(value) ? '' : 'El correo debe ser un Gmail válido (@gmail.com)');
     } else if (name === 'telefono') {
       if (validarTelefono(value)) {
-        setForm((prev) => ({ ...prev, telefono: value }));
+        setForm(prev => ({ ...prev, telefono: value }));
         setErrorTelefono('');
       } else {
-        // No actualizar el estado si es inválido (evita que se escriba)
         setErrorTelefono('El teléfono debe contener solo números y máximo 8 dígitos');
       }
     } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
+      setForm(prev => ({ ...prev, [name]: value }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validarCorreoGmail(form.correo)) {
-      setErrorCorreo('El correo debe ser un Gmail válido (terminado en @gmail.com)');
-      return;
-    }
-
-    if (!validarTelefono(form.telefono)) {
-      setErrorTelefono('El teléfono debe contener solo números y máximo 8 dígitos');
-      return;
-    }
+    if (!validarCorreoGmail(form.correo) || !validarTelefono(form.telefono)) return;
 
     try {
-      await axios.post('http://localhost:4000/api/usuarios/registro-docente', {
+      // Guardar en la BD
+      const response = await axios.post('http://localhost:4000/api/usuarios/registro-docente', {
         ...form,
-        rol: 'docente',
+        rol: 'docente'
       });
-      alert('Docente registrado correctamente');
+
+      // Guardar datos para el modal
+      setDocenteGuardado({
+        ...form,
+        id: response.data.id || 'N/A', // si tu backend devuelve id
+      });
+
+      // Mostrar modal resumen
+      setShowModal(true);
+
+      // Limpiar formulario
       setForm({
         nombre: '',
         correo: '',
@@ -100,7 +93,7 @@ const RegistrarDocente = () => {
       setErrorTelefono('');
     } catch (err) {
       console.error(err);
-      alert('Error al registrar docente');
+      alert(err.response?.data?.mensaje || 'Error al registrar docente');
     }
   };
 
@@ -109,21 +102,6 @@ const RegistrarDocente = () => {
       <button
         className="btn-volver"
         onClick={() => navigate('/dashboard-direccion')}
-        style={{
-          backgroundColor: '#497c9e',
-          color: 'white',
-          border: 'none',
-          padding: '0.5rem 1rem',
-          borderRadius: '10px',
-          cursor: 'pointer',
-          marginBottom: '1.5rem',
-          fontWeight: '600',
-          fontSize: '0.9rem',
-          boxShadow: '0 3px 8px rgba(0,0,0,0.1)',
-          transition: 'background-color 0.3s ease',
-        }}
-        onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#3d687f')}
-        onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#497c9e')}
       >
         ← Volver al Dashboard
       </button>
@@ -187,9 +165,7 @@ const RegistrarDocente = () => {
           >
             <option value="">Seleccione una especialidad</option>
             {especialidadesDisponibles.map((esp, idx) => (
-              <option key={idx} value={esp}>
-                {esp}
-              </option>
+              <option key={idx} value={esp}>{esp}</option>
             ))}
           </select>
         </div>
@@ -204,9 +180,7 @@ const RegistrarDocente = () => {
           >
             <option value="">Seleccione un grado</option>
             {gradosDisponibles.map((grado, idx) => (
-              <option key={idx} value={grado}>
-                {grado}
-              </option>
+              <option key={idx} value={grado}>{grado}</option>
             ))}
           </select>
         </div>
@@ -219,6 +193,25 @@ const RegistrarDocente = () => {
           Registrar Docente
         </button>
       </form>
+
+      {/* Modal resumen */}
+      {showModal && docenteGuardado && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Docente registrado</h3>
+            <ul>
+              <li><strong>ID:</strong> {docenteGuardado.id}</li>
+              <li><strong>Nombre:</strong> {docenteGuardado.nombre}</li>
+              <li><strong>Correo:</strong> {docenteGuardado.correo}</li>
+              <li><strong>Teléfono:</strong> {docenteGuardado.telefono || 'N/A'}</li>
+              <li><strong>Dirección:</strong> {docenteGuardado.direccion || 'N/A'}</li>
+              <li><strong>Especialidad:</strong> {docenteGuardado.especialidad}</li>
+              <li><strong>Grado:</strong> {docenteGuardado.grado}</li>
+            </ul>
+            <button onClick={() => setShowModal(false)}>Cerrar</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
