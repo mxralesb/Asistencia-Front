@@ -1,68 +1,85 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/RegistrarAlumno.css';
+import { notifyAlumnosChanged } from '../lib/alumnosBus';
 
-const gradosDisponibles = ['Primero', 'Segundo', 'Tercero', 'Cuarto', 'Quinto'];
+const API_BASE = 'http://localhost:4000';
+
+const gradosDisponibles = [
+  'Primero Básico',
+  'Segundo Básico',
+  'Tercero Básico',
+  'Cuarto Bachillerato',
+  'Quinto Bachillerato'
+];
 
 const RegistrarAlumno = () => {
-  const [form, setForm] = useState({
-    nombre: '',
-    carnet: '',
-    grado: '',
-  });
-
+  const [form, setForm] = useState({ nombre: '', carnet: '', grado: '' });
+  const [enviando, setEnviando] = useState(false);
   const [modal, setModal] = useState({ abierto: false, tipo: '', mensaje: '', resumen: null });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm(prev => ({
+      ...prev,
+      [name]: name === 'carnet' ? value.toUpperCase() : value
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.nombre || !form.carnet || !form.grado) {
-      setModal({
-        abierto: true,
-        tipo: 'error',
-        mensaje: 'Por favor, complete todos los campos obligatorios.',
-        resumen: null
-      });
+    const nombre = form.nombre.trim();
+    const carnet = form.carnet.trim().toUpperCase();
+    const grado  = form.grado.trim();
+
+    if (!nombre || !carnet || !grado) {
+      setModal({ abierto: true, tipo: 'error', mensaje: 'Por favor, complete todos los campos obligatorios.', resumen: null });
       return;
     }
 
     try {
-      const res = await axios.post('http://localhost:4000/api/alumnos', {
-        nombre_completo: form.nombre,
-        carnet: form.carnet,
-        grado: form.grado,
-        activo: true, // Siempre activo al crear
+      setEnviando(true);
+      const res = await axios.post(`${API_BASE}/api/alumnos`, {
+        nombre_completo: nombre,
+        carnet,
+        grado,
+        activo: true,
       });
+
+      // Notifica a la vista de consulta para que se refresque de inmediato
+      notifyAlumnosChanged();
 
       setModal({
         abierto: true,
         tipo: 'success',
         mensaje: 'Alumno registrado correctamente.',
         resumen: {
-          nombre: form.nombre,
-          carnet: form.carnet,
-          grado: form.grado,
-          qr: res.data.qr_codigo
+          nombre,
+          carnet,
+          grado,
+          qr: res?.data?.qr_codigo
         }
       });
 
       setForm({ nombre: '', carnet: '', grado: '' });
-
     } catch (error) {
       console.error(error);
-      setModal({
-        abierto: true,
-        tipo: 'error',
-        mensaje: 'Error al registrar alumno.',
-        resumen: null
-      });
+      const msg = error?.response?.status === 409
+        ? 'El carnet ya existe. Verifique e intente nuevamente.'
+        : 'Error al registrar alumno.';
+      setModal({ abierto: true, tipo: 'error', mensaje: msg, resumen: null });
+    } finally {
+      setEnviando(false);
     }
   };
+
+  // Cerrar modal con Escape
+  useEffect(() => {
+    const onEsc = (e) => { if (e.key === 'Escape') setModal(m => ({ ...m, abierto: false })); };
+    window.addEventListener('keydown', onEsc);
+    return () => window.removeEventListener('keydown', onEsc);
+  }, []);
 
   return (
     <>
@@ -77,6 +94,7 @@ const RegistrarAlumno = () => {
             value={form.nombre}
             onChange={handleChange}
             placeholder="Nombre completo"
+            autoComplete="off"
             required
           />
 
@@ -88,6 +106,7 @@ const RegistrarAlumno = () => {
             value={form.carnet}
             onChange={handleChange}
             placeholder="Carnet"
+            autoComplete="off"
             required
           />
 
@@ -105,7 +124,9 @@ const RegistrarAlumno = () => {
             ))}
           </select>
 
-          <button type="submit" className="btn-submit">Registrar Alumno</button>
+          <button type="submit" className="btn-submit" disabled={enviando}>
+            {enviando ? 'Registrando…' : 'Registrar Alumno'}
+          </button>
         </form>
       </div>
 
@@ -120,17 +141,15 @@ const RegistrarAlumno = () => {
                 <p><strong>Nombre:</strong> {modal.resumen.nombre}</p>
                 <p><strong>Carnet:</strong> {modal.resumen.carnet}</p>
                 <p><strong>Grado:</strong> {modal.resumen.grado}</p>
+
                 {modal.resumen.qr && (
                   <>
-                    <img 
-                      src={modal.resumen.qr} 
-                      alt={`QR de ${modal.resumen.nombre}`} 
+                    <img
+                      src={modal.resumen.qr}
+                      alt={`QR de ${modal.resumen.nombre}`}
                       className="modal-qr"
                     />
-                    <a 
-                      href={modal.resumen.qr} 
-                      download={`qr_alumno_${modal.resumen.carnet}.png`}
-                    >
+                    <a href={modal.resumen.qr} download={`qr_alumno_${modal.resumen.carnet}.png`}>
                       <button className="btn-download-modal">Descargar QR</button>
                     </a>
                   </>

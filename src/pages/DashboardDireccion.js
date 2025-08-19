@@ -43,7 +43,7 @@ const DashboardDireccion = () => {
 
   <div className="dashboard-card" onClick={irA('/alumnos')}>
     <FaChild className="card-icon" />
-    <h2 className="card-title">Lista de Alumnos</h2>
+    <h2 className="card-title">Gestion de Alumnos</h2>
     <p className="card-description">Ver y gestionar alumnos por grado.</p>
   </div>
 

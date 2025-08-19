@@ -1,136 +1,219 @@
+/* =========================
+   Paleta & tokens (fácil de ajustar)
+   ========================= */
+:root{
+  --color-bg: #ffffff;
+  --color-text: #4b347d;
+
+  --violet-50:  #faf5ff;
+  --violet-100: #f3e8ff;
+  --violet-200: #e9d5ff;
+  --violet-300: #d8b4fe;
+  --violet-400: #c084fc;
+  --violet-500: #a855f7;
+  --violet-600: #7c3aed;
+  --violet-700: #6d28d9;
+  --violet-800: #5b21b6;
+
+  --indigo-50:  #eef2ff;
+
+  --slate-50:  #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e5e7eb;
+  --slate-600: #475569;
+
+  --red-100:   #fee2e2;
+  --red-800:   #991b1b;
+  --green-100: #dcfce7;
+  --green-800: #166534;
+
+  --radius-lg: 14px;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 2px rgba(10,10,10,0.06);
+  --shadow-md: 0 8px 20px rgba(91, 59, 138, 0.15);
+  --shadow-card: 0 2px 6px rgba(91,59,138,0.12);
+
+  --focus-ring: 0 0 0 3px rgba(168,85,247,0.25);
+  --transition: 180ms ease;
+}
+
+/* =========================
+   Layout general
+   ========================= */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, 'Helvetica Neue', Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  color: var(--color-text);
+}
+
 .consulta-alumnos {
-  max-width: 800px;
-  margin: 2rem auto;
-  background: #fff;
-  padding: 2rem 2.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 8px 20px rgba(91, 59, 138, 0.15);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #4b347d;
-  animation: fadeInUp 0.8s ease forwards;
+  max-width: 1100px;
+  margin: 24px auto;
+  background: var(--color-bg);
+  padding: 24px 28px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  animation: fadeInUp .6s var(--transition);
 }
 
-.consulta-alumnos h2 {
-  text-align: center;
-  font-weight: 700;
-  font-size: 2rem;
-  margin-bottom: 1.8rem;
-  color: #5b3b8a;
-}
-
-.filtros {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.8rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.filtros input {
-  flex: 1 1 200px;
-  padding: 0.6rem 1rem;
-  border: 1.5px solid #cbb9e3;
-  border-radius: 12px;
-  font-size: 1rem;
-  color: #4b347d;
-  background-color: #f9f7fc;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.filtros input:focus {
-  outline: none;
-  border-color: #6f42c1;
-  box-shadow: 0 0 8px rgba(111, 66, 193, 0.5);
-  background-color: #fff;
-}
-
-.filtros button {
-  background: linear-gradient(135deg, #6f42c1, #a26dd9);
-  border: none;
-  padding: 0 1.8rem;
-  font-weight: 700;
-  color: #fff;
-  border-radius: 12px;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(111, 66, 193, 0.4);
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  user-select: none;
-}
-
-.filtros button:hover {
-  background: linear-gradient(135deg, #5a2eac, #8a52c9);
-  box-shadow: 0 10px 30px rgba(90, 46, 172, 0.6);
-}
-
-/* Tabla */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 1rem;
-  color: #4b347d;
-  user-select: none;
-}
-
-thead {
-  background-color: #a26dd9;
-  color: white;
-  border-radius: 1rem 1rem 0 0;
-}
-
-thead th {
-  padding: 1rem;
-  text-align: left;
-  font-weight: 700;
-}
-
-tbody tr {
-  background-color: #f9f7fc;
-  border-bottom: 1px solid #cbb9e3;
-  transition: background-color 0.3s ease;
-  cursor: default;
-}
-
-tbody tr:hover {
-  background-color: #e1d5f7;
-}
-
-tbody td {
-  padding: 0.85rem 1rem;
-}
-
-/* Mensaje cuando no hay datos */
-.consulta-alumnos p {
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #7a5fbf;
-  margin-top: 2rem;
-}
-
-/* Animación fadeInUp */
 @keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .filtros {
-    flex-direction: column;
-  }
-
-  .filtros input, .filtros button {
-    width: 100%;
-  }
-
-  thead th, tbody td {
-    padding: 0.6rem 0.5rem;
-    font-size: 0.9rem;
-  }
+/* =========================
+   Header
+   ========================= */
+.header{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;
 }
+.header h2{ margin:0; font-weight:800; color: var(--violet-800); }
+.results-pill{
+  background: var(--violet-100);
+  color: var(--violet-800);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =========================
+   Filtros
+   ========================= */
+.filters-card{
+  background: var(--violet-50);
+  border: 1px solid var(--violet-200);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+.filters-grid{
+  display:grid; gap:12px;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+}
+@media (max-width: 900px){ .filters-grid{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px){ .filters-grid{ grid-template-columns: 1fr; } }
+
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{
+  font-size:12px; font-weight:700; color: var(--violet-700); letter-spacing:.01em;
+}
+.field input, .field select{
+  padding:10px 12px;
+  border:1.5px solid var(--violet-200);
+  border-radius: var(--radius-md);
+  background:#fff;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+.field input:focus, .field select:focus{
+  border-color: var(--violet-500);
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+/* =========================
+   Botones
+   ========================= */
+.btn{
+  display:inline-flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, var(--violet-600), var(--violet-500));
+  color:#fff; border:none; border-radius: var(--radius-md);
+  padding:8px 12px; font-weight:700; cursor:pointer;
+  transition: filter var(--transition), transform 60ms ease;
+}
+.btn:hover{ filter: brightness(1.08); }
+.btn:active{ transform: translateY(1px); }
+.btn:focus-visible{ outline:none; box-shadow: var(--focus-ring); }
+
+.btn.secondary{
+  background:#f8f5ff; color: var(--violet-800);
+  border:1px solid var(--violet-200);
+}
+/* =========================
+   Tabla de alumnos
+   ========================= */
+.table-wrapper{
+  background:#fff; border:1px solid var(--violet-200);
+  border-radius: var(--radius-lg); overflow:hidden; box-shadow: var(--shadow-sm);
+}
+.nice-table{ width:100%; border-collapse:collapse; }
+.nice-table thead th{
+  background: var(--violet-100); color: var(--violet-800);
+  text-align:left; padding:12px; font-size:12px; letter-spacing:.02em;
+  border-bottom:1px solid var(--violet-200);
+}
+.nice-table tbody td{
+  padding:12px; border-bottom:1px solid var(--slate-100);
+}
+.nice-table tbody tr:hover{ background: var(--slate-50); }
+
+/* Estado */
+.badge{
+  display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:800;
+}
+.badge.ok {
+  background: #dcfce7;
+  color: #166534;      
+}
+.badge.warn { background: var(--red-100); color: var(--red-800); }
+
+/* QR & acciones */
+.qr-thumb{ width:48px; height:48px; object-fit:contain; }
+.col-actions, .row-actions{ text-align:right; }
+.loading,.empty{ margin-top:20px; color: var(--slate-600); }
+
+/* =========================
+   Tabla (mobile)
+   ========================= */
+
+@media (max-width: 640px){
+  .table-wrapper{ border:none; box-shadow:none; background:transparent; }
+  .nice-table thead{ display:none; }
+  .nice-table{ border-collapse:separate; border-spacing:0 12px; }
+
+  .nice-table tbody tr{
+    display:block; background:#fff; border:1px solid var(--violet-200);
+    border-radius: var(--radius-lg); padding:12px; box-shadow: var(--shadow-card);
+  }
+  .nice-table tbody tr:hover{ background:#fff; }
+
+  .nice-table tbody td{
+    display:grid; grid-template-columns: 120px 1fr;
+    gap:8px; padding:8px 0; border-bottom:none; align-items:center;
+    font-size:14px;
+  }
+  .nice-table tbody td + td{ border-top:1px dashed var(--slate-200); }
+
+  /* Etiquetas por posición (si cambias columnas, ajusta estos) */
+  .nice-table tbody td:nth-child(1)::before { content:"Nombre"; }
+  .nice-table tbody td:nth-child(2)::before { content:"Carnet"; }
+  .nice-table tbody td:nth-child(3)::before { content:"Grado"; }
+  .nice-table tbody td:nth-child(4)::before { content:"Estado"; }
+  .nice-table tbody td:nth-child(5)::before { content:"Maestro"; }
+  .nice-table tbody td:nth-child(6)::before { content:"QR"; }
+  .nice-table tbody td:nth-child(7)::before { content:"Acciones"; }
+
+  .nice-table tbody td::before{
+    color: var(--violet-700);
+    font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.02em;
+  }
+
+  .qr-thumb{ width:72px; height:72px; justify-self:start; }
+
+  .col-actions, .row-actions{ text-align:left; }
+  .row-actions .btn{ width:100%; justify-content:center; }
+}
+
+/* =========================
+   Extras útiles
+   ========================= */
+.filters-actions{ display:flex; justify-content:flex-end; margin-top:10px; gap:8px; }
+
+/* Scrollbar (opcional, WebKit) */
+*::-webkit-scrollbar{ height:10px; width:10px; }
+*::-webkit-scrollbar-track{ background: #fafafa; border-radius: 999px; }
+*::-webkit-scrollbar-thumb{ background: #d8b4fe; border-radius: 999px; }
+*::-webkit-scrollbar-thumb:hover{ background: #c084fc; }
