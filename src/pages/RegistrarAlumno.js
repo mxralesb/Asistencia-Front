@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import AlertModal from '../components/AlertModal';
 import '../styles/RegistrarAlumno.css';
-import { notifyAlumnosChanged } from '../lib/alumnosBus';
 
 const API_BASE = 'http://localhost:4000';
 
@@ -13,73 +13,88 @@ const gradosDisponibles = [
   'Quinto Bachillerato'
 ];
 
+function fireAlumnosChanged() {
+  const ev = new Event('alumnos:changed');
+  window.dispatchEvent(ev);
+}
+
 const RegistrarAlumno = () => {
   const [form, setForm] = useState({ nombre: '', carnet: '', grado: '' });
-  const [enviando, setEnviando] = useState(false);
+
+  // Modal de éxito que ya tenías
   const [modal, setModal] = useState({ abierto: false, tipo: '', mensaje: '', resumen: null });
+
+  // 🔔 Modal de alerta para el 409 (sin docente)
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: name === 'carnet' ? value.toUpperCase() : value
-    }));
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const nombre = form.nombre.trim();
-    const carnet = form.carnet.trim().toUpperCase();
-    const grado  = form.grado.trim();
-
-    if (!nombre || !carnet || !grado) {
-      setModal({ abierto: true, tipo: 'error', mensaje: 'Por favor, complete todos los campos obligatorios.', resumen: null });
+    if (!form.nombre || !form.carnet || !form.grado) {
+      setModal({
+        abierto: true,
+        tipo: 'error',
+        mensaje: 'Por favor, complete todos los campos obligatorios.',
+        resumen: null
+      });
       return;
     }
 
     try {
-      setEnviando(true);
       const res = await axios.post(`${API_BASE}/api/alumnos`, {
-        nombre_completo: nombre,
-        carnet,
-        grado,
+        nombre_completo: form.nombre,
+        carnet: form.carnet,
+        grado: form.grado,
         activo: true,
+        // Si quisieras forzar docente: usuario_id: <id_docente>
       });
-
-      // Notifica a la vista de consulta para que se refresque de inmediato
-      notifyAlumnosChanged();
 
       setModal({
         abierto: true,
         tipo: 'success',
         mensaje: 'Alumno registrado correctamente.',
         resumen: {
-          nombre,
-          carnet,
-          grado,
-          qr: res?.data?.qr_codigo
+          nombre: form.nombre,
+          carnet: form.carnet,
+          grado: form.grado,
+          qr: res.data.qr_codigo
         }
       });
 
       setForm({ nombre: '', carnet: '', grado: '' });
+
+      // notifica a otras vistas que escuchan alumnos:changed (ConsultaAlumnos)
+      fireAlumnosChanged();
+
     } catch (error) {
-      console.error(error);
-      const msg = error?.response?.status === 409
-        ? 'El carnet ya existe. Verifique e intente nuevamente.'
-        : 'Error al registrar alumno.';
-      setModal({ abierto: true, tipo: 'error', mensaje: msg, resumen: null });
-    } finally {
-      setEnviando(false);
+      // 👇 Detecta el 409 del backend cuando no hay docente para el grado
+      const status = error?.response?.status;
+      const msg = error?.response?.data?.error || error?.response?.data?.mensaje;
+
+      if (status === 409 && /docente/i.test(String(msg))) {
+        setAlertMsg(
+          msg ||
+          'No hay un docente activo asignado a ese grado. Asigna un docente al grado o selecciona uno manualmente.'
+        );
+        setAlertOpen(true);
+        return;
+      }
+
+      // Otros errores (duplicado de carnet, etc.)
+      setModal({
+        abierto: true,
+        tipo: 'error',
+        mensaje: msg || 'Error al registrar alumno.',
+        resumen: null
+      });
     }
   };
-
-  // Cerrar modal con Escape
-  useEffect(() => {
-    const onEsc = (e) => { if (e.key === 'Escape') setModal(m => ({ ...m, abierto: false })); };
-    window.addEventListener('keydown', onEsc);
-    return () => window.removeEventListener('keydown', onEsc);
-  }, []);
 
   return (
     <>
@@ -94,7 +109,6 @@ const RegistrarAlumno = () => {
             value={form.nombre}
             onChange={handleChange}
             placeholder="Nombre completo"
-            autoComplete="off"
             required
           />
 
@@ -106,7 +120,6 @@ const RegistrarAlumno = () => {
             value={form.carnet}
             onChange={handleChange}
             placeholder="Carnet"
-            autoComplete="off"
             required
           />
 
@@ -124,13 +137,11 @@ const RegistrarAlumno = () => {
             ))}
           </select>
 
-          <button type="submit" className="btn-submit" disabled={enviando}>
-            {enviando ? 'Registrando…' : 'Registrar Alumno'}
-          </button>
+          <button type="submit" className="btn-submit">Registrar Alumno</button>
         </form>
       </div>
 
-      {/* Modal */}
+      {/* Modal éxito/error existente */}
       {modal.abierto && (
         <div className="modal-overlay" onClick={() => setModal({ ...modal, abierto: false })}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -141,7 +152,6 @@ const RegistrarAlumno = () => {
                 <p><strong>Nombre:</strong> {modal.resumen.nombre}</p>
                 <p><strong>Carnet:</strong> {modal.resumen.carnet}</p>
                 <p><strong>Grado:</strong> {modal.resumen.grado}</p>
-
                 {modal.resumen.qr && (
                   <>
                     <img
@@ -149,7 +159,10 @@ const RegistrarAlumno = () => {
                       alt={`QR de ${modal.resumen.nombre}`}
                       className="modal-qr"
                     />
-                    <a href={modal.resumen.qr} download={`qr_alumno_${modal.resumen.carnet}.png`}>
+                    <a
+                      href={modal.resumen.qr}
+                      download={`qr_alumno_${modal.resumen.carnet}.png`}
+                    >
                       <button className="btn-download-modal">Descargar QR</button>
                     </a>
                   </>
@@ -163,6 +176,14 @@ const RegistrarAlumno = () => {
           </div>
         </div>
       )}
+
+      {/* 🔔 Modal de alerta 409 (sin docente para el grado) */}
+      <AlertModal
+        open={alertOpen}
+        title="No hay docente para el grado"
+        message={alertMsg}
+        onClose={() => setAlertOpen(false)}
+      />
     </>
   );
 };
