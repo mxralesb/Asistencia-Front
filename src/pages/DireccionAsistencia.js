@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:4000';
@@ -33,53 +33,42 @@ export default function DireccionAsistencia(){
   const [q, setQ] = useState('');
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sel, setSel] = useState(new Set()); // selección para masivo
+  const [err, setErr] = useState('');
+  const abortRef = useRef(null);
 
   const fetch = async () => {
+    if (abortRef.current) abortRef.current.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
     setLoading(true);
+    setErr('');
     try{
       const { data } = await axios.get(`${API_BASE}/api/asistencia`, {
-        params: { fecha, grado, docente, q, estado }
+        params: { fecha, grado, docente, q, estado },
+        signal: ctrl.signal
       });
       setRows(Array.isArray(data)? data : []);
-      setSel(new Set());
     }catch(e){
-      console.error(e);
-      alert('Error cargando asistencia');
-    }finally{ setLoading(false); }
+      if (!axios.isCancel(e)) {
+        console.error(e);
+        setErr(e?.response?.data?.error || 'No se pudo cargar la asistencia');
+      }
+    }finally{
+      setLoading(false);
+    }
   };
 
+  // Carga inicial y cuando cambian filtros
   useEffect(()=>{ fetch(); /* eslint-disable-next-line */ }, [fecha, grado, docente, estado, q]);
+
+  // Auto-refresco cada 10s
+  useEffect(()=>{
+    const id = setInterval(fetch, 10000);
+    return () => clearInterval(id);
+  }, [fecha, grado, docente, estado, q]);
 
   const grados = useMemo(()=>Array.from(new Set(rows.map(r=>r.grado).filter(Boolean))).sort(),[rows]);
   const docentes = useMemo(()=>Array.from(new Set(rows.map(r=>(r.docente_nombre||'').trim()).filter(Boolean))).sort(),[rows]);
-  const seleccionados = useMemo(()=>rows.filter(r=>sel.has(r.alumno_id)),[rows, sel]);
-
-  const toggleSel = (id) => {
-    const copy = new Set(sel);
-    copy.has(id) ? copy.delete(id) : copy.add(id);
-    setSel(copy);
-  };
-
-  const marcarFila = async (r, nuevoEstado) => {
-    try{
-      await axios.post(`${API_BASE}/api/asistencia/marcar`, {
-        alumno_id: r.alumno_id, fecha, estado: nuevoEstado
-      });
-      setRows(prev => prev.map(x => x.alumno_id===r.alumno_id ? {...x, estado: nuevoEstado} : x));
-    }catch(e){ console.error(e); alert('No se pudo marcar'); }
-  };
-
-  const marcarMasivo = async (nuevoEstado) => {
-    if(!seleccionados.length) return;
-    try{
-      await axios.post(`${API_BASE}/api/asistencia/bulk`, {
-        fecha, alumno_ids: seleccionados.map(r=>r.alumno_id), estado: nuevoEstado
-      });
-      setRows(prev => prev.map(x => sel.has(x.alumno_id) ? {...x, estado: nuevoEstado} : x));
-      setSel(new Set());
-    }catch(e){ console.error(e); alert('No se pudo marcar masivo'); }
-  };
 
   return (
     <div className="page">
@@ -87,6 +76,8 @@ export default function DireccionAsistencia(){
         <h2>Asistencia — Dirección</h2>
         <div className="results-pill">{rows.length} alumno(s)</div>
       </div>
+
+      {err && <div className="error-banner">{err}</div>}
 
       {/* Filtros */}
       <div className="filters-card">
@@ -122,51 +113,38 @@ export default function DireccionAsistencia(){
         </div>
 
         <div className="filters-actions" style={{gap:8}}>
-          <button className="btn secondary" onClick={()=>{ setGrado(''); setDocente(''); setEstado(''); setQ(''); }}>
+          <button className="btn secondary" onClick={()=>{
+            setGrado(''); setDocente(''); setEstado(''); setQ('');
+          }}>
             Limpiar filtros
+          </button>
+          <button className="btn" onClick={fetch} disabled={loading}>
+            {loading ? 'Actualizando…' : 'Actualizar'}
           </button>
           <button className="btn" onClick={()=>exportCSV(rows, fecha)} disabled={!rows.length}>
             Exportar CSV
           </button>
-          <button className="btn" onClick={()=>marcarMasivo('presente')} disabled={!seleccionados.length}>
-            Marcar Presente (selección)
-          </button>
-          <button className="btn" onClick={()=>marcarMasivo('ausente')} disabled={!seleccionados.length}>
-            Marcar Ausente (selección)
-          </button>
-          <button className="btn" onClick={()=>marcarMasivo('tarde')} disabled={!seleccionados.length}>
-            Marcar Tarde (selección)
-          </button>
         </div>
       </div>
 
-      {/* Tabla */}
+      {/* Tabla (solo lectura) */}
       {loading ? <p className="loading">Cargando…</p> : (
         rows.length ? (
           <div className="table-wrapper">
             <table className="nice-table">
               <thead>
                 <tr>
-                  <th><input type="checkbox"
-                    onChange={e=>{
-                      if(e.target.checked){ setSel(new Set(rows.map(r=>r.alumno_id))); }
-                      else setSel(new Set());
-                    }}
-                    checked={sel.size>0 && sel.size===rows.length}
-                    aria-label="Seleccionar todos"
-                  /></th>
                   <th>Nombre</th>
                   <th>Carnet</th>
                   <th>Grado</th>
                   <th>Docente</th>
                   <th>Estado</th>
-                  <th className="col-actions">Acciones</th>
+                  <th>Observaciones</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map(r=>(
                   <tr key={r.alumno_id}>
-                    <td><input type="checkbox" checked={sel.has(r.alumno_id)} onChange={()=>toggleSel(r.alumno_id)} /></td>
                     <td>{r.nombre_completo}</td>
                     <td>{r.carnet}</td>
                     <td>{r.grado}</td>
@@ -178,17 +156,7 @@ export default function DireccionAsistencia(){
                         r.estado==='tarde' ? 'late' : 'muted'
                       }`}>{r.estado}</span>
                     </td>
-                    <td className="row-actions" style={{display:'flex',gap:6,justifyContent:'flex-end'}}>
-                      <select
-                        value={r.estado}
-                        onChange={e=>marcarFila(r, e.target.value)}
-                      >
-                        {ESTADOS.slice(1).map(eo=>(
-                          <option key={eo.v} value={eo.v}>{eo.label}</option>
-                        ))}
-                        <option value="sin_registro">Sin registro</option>
-                      </select>
-                    </td>
+                    <td>{r.observaciones || '—'}</td>
                   </tr>
                 ))}
               </tbody>

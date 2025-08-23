@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FiDownload, FiRefreshCw } from 'react-icons/fi';
 import '../styles/ConsultaAlumnos.css';
 
-const API_BASE = 'http://localhost:4000';
+const API_BASE = "http://localhost:4000";
 
 const CHANNEL = 'alumnos:changed';
 function onAlumnosChanged(cb) {

@@ -1,18 +1,15 @@
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+// src/components/DocenteAlumnosAsignados.js
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FiSearch, FiBarChart2, FiDownload, FiX } from 'react-icons/fi';
+import { FiSearch, FiBarChart2, FiDownload, FiX, FiArrowLeft } from 'react-icons/fi';
 import '../styles/DocenteAlumnosAsignados.css';
 
 const API_BASE = 'http://localhost:4000';
-const DOCENTE_ID_DEFAULT = Number(localStorage.getItem('docente_id')) || 1;
 
 function exportarCSV(rows, filename = 'reporte_alumno.csv') {
   const headers = ['Fecha', 'Estado', 'Observaciones'];
-  const lines = rows.map(r => ([
-    r.fecha ?? '',
-    r.estado ?? '',
-    r.observaciones ?? ''
-  ]));
+  const lines = rows.map(r => [r.fecha ?? '', r.estado ?? '', r.observaciones ?? '']);
   const esc = v => `"${String(v).replace(/"/g,'""')}"`;
   const csv = [headers, ...lines].map(r => r.map(esc).join(',')).join('\n');
   const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' });
@@ -29,19 +26,21 @@ const ReporteAlumnoModal = ({ alumno, abierto, onClose }) => {
 
   useEffect(() => {
     if (!abierto || !alumno) return;
-    const fetch = async () => {
+    (async () => {
       try {
         setCargando(true);
         const r = await axios.get(`${API_BASE}/api/reportes/alumno/${alumno.id}`, {
-          params: { desde: desde || undefined, hasta: hasta || undefined }
+          params: { desde: desde || undefined, hasta: hasta || undefined },
         });
-        setRows(Array.isArray(r.data) ? r.data : []);
+        const data = Array.isArray(r.data) ? r.data : (r.data.registros || []);
+        setRows(Array.isArray(data) ? data : []);
       } catch (e) {
         console.error(e);
         alert('Error cargando reporte');
-      } finally { setCargando(false); }
-    };
-    fetch();
+      } finally {
+        setCargando(false);
+      }
+    })();
   }, [abierto, alumno, desde, hasta]);
 
   if (!abierto || !alumno) return null;
@@ -106,9 +105,7 @@ const ReporteAlumnoModal = ({ alumno, abierto, onClose }) => {
                         r.estado==='presente' ? 'badge ok' :
                         r.estado==='tarde' ? 'badge late' :
                         r.estado==='ausente' ? 'badge warn' : 'badge muted'
-                      }>
-                        {r.estado}
-                      </span>
+                      }>{r.estado}</span>
                     </td>
                     <td>{r.observaciones || '—'}</td>
                   </tr>
@@ -116,9 +113,7 @@ const ReporteAlumnoModal = ({ alumno, abierto, onClose }) => {
               </tbody>
             </table>
           </div>
-        ) : (
-          <p className="muted">No hay registros.</p>
-        )}
+        ) : <p className="muted">No hay registros.</p>}
       </div>
     </div>
   );
@@ -130,53 +125,22 @@ const DocenteAlumnosAsignados = () => {
   const [q, setQ] = useState('');
   const [sel, setSel] = useState(null);
   const [abierto, setAbierto] = useState(false);
-  const didFetch = useRef(false);           
-  const triedFallback = useRef(false);      
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const docenteId = Number(localStorage.getItem('docente_id')) || DOCENTE_ID_DEFAULT;
-
-    const fetch = async (idToUse) => {
+    (async () => {
       try {
-        const r = await axios.get(`${API_BASE}/api/docente/${idToUse}/alumnos`);
-
-        const gradoApi = r.data?.docente?.grado || r.data?.grado || '';
-        const alumnosApi = Array.isArray(r.data?.alumnos) ? r.data.alumnos : [];
-
-        
-        if (r.data?.docente?.id) {
-          localStorage.setItem('docente_id', String(r.data.docente.id));
-        }
-
-        setGrado(gradoApi);
-        setLista(alumnosApi);
+        const token = localStorage.getItem('token');
+        const { data } = await axios.get(`${API_BASE}/api/docente/alumnos`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        setGrado(data?.docente?.grado || '');
+        setLista(Array.isArray(data?.alumnos) ? data.alumnos : []);
       } catch (e) {
-        
-        const status = e?.response?.status;
-        if (status === 404 && !triedFallback.current) {
-          triedFallback.current = true;
-          try {
-            const dbg = await axios.get(`${API_BASE}/api/docente/debug/list`);
-            const firstDocente = (Array.isArray(dbg.data) ? dbg.data : []).find(d => d.activo && d.grado && String(d.rol).toLowerCase() === 'docente');
-            if (firstDocente?.id) {
-              localStorage.setItem('docente_id', String(firstDocente.id));
-              return fetch(firstDocente.id); // reintento con el primero activo
-            }
-            alert('No hay docentes activos con grado asignado.');
-          } catch (errDbg) {
-            console.error('debug/list error:', errDbg);
-            alert('Docente no encontrado o sin grado asignado.');
-          }
-        } else {
-          console.error(e);
-          alert('Error cargando alumnos del docente');
-        }
+        console.error(e);
+        alert('No se pudieron cargar tus alumnos. Verifica tu sesión.');
       }
-    };
-
-    if (!didFetch.current) {
-      didFetch.current = true;
-      fetch(docenteId);
-    }
+    })();
   }, []);
 
   const filtrados = useMemo(() => {
@@ -190,8 +154,14 @@ const DocenteAlumnosAsignados = () => {
 
   return (
     <div className="docente-wrap">
+      {/* Barra superior con volver */}
       <div className="topbar">
-        <h2>Alumnos asignados — {grado || 'Sin grado'}</h2>
+        <button className="btn secondary" onClick={() => navigate('/dashboard-docente')}>
+          <FiArrowLeft style={{marginRight:6}}/> Volver al Dashboard
+        </button>
+        <h2 style={{marginLeft:12, flex:1}}>
+          Alumnos asignados — {grado || 'Sin grado'}
+        </h2>
         <div className="search">
           <FiSearch/>
           <input
@@ -202,6 +172,7 @@ const DocenteAlumnosAsignados = () => {
         </div>
       </div>
 
+      {/* Cards */}
       <div className="cards-grid">
         {filtrados.map(a => (
           <div className="alumno-card" key={a.id}>
@@ -222,6 +193,7 @@ const DocenteAlumnosAsignados = () => {
         ))}
       </div>
 
+      {/* Modal de Reporte */}
       <ReporteAlumnoModal
         alumno={sel}
         abierto={abierto}

@@ -20,28 +20,43 @@ export default function EscanearQR() {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  const docente_id = Number(localStorage.getItem('docente_id')); // setéalo al hacer login
+  const docente_id = Number(localStorage.getItem('docente_id')); 
 
-  // post al backend con fecha/hora/maestro
-  const marcar = async (decodedText) => {
-    const ahora = new Date();
-    const fechaHoraISO = ahora.toISOString(); // fecha y hora exactas
-    try {
-      await axios.post(`${API_BASE}/api/asistencia/marcar`, {
-        carnet: decodedText,
-        docente_id,
-        fecha_hora: fechaHoraISO,
-        estado: 'presente',
-        observaciones: `Escaneo ${fecha ? `para ${fecha}` : 'sin fecha seleccionada'} — ${grado || 'sin grado'}`
-      });
-      setMensaje(`✅ Marcada: ${decodedText} • ${ahora.toLocaleString()}`);
-      // Notifica a otras vistas para refrescar
-      window.dispatchEvent(new Event('asistencia:changed'));
-    } catch (e) {
-      console.error(e);
-      setMensaje('❌ No se pudo marcar. Revisa consola.');
+
+const marcar = async (decodedText) => {
+  try {
+    // 1) Registrar en backend
+    const { data } = await axios.post(`${API_BASE}/api/asistencia/marcar`, {
+      carnet: decodedText,
+      docente_id,                           // tu doc id (localStorage)
+      fecha_hora: new Date().toISOString(), // para el cálculo de tarde/presente
+      estado: 'presente'
+    });
+
+  
+    const respAl = await axios.get(`${API_BASE}/api/alumnos`, { params: { q: decodedText }});
+    const lista = Array.isArray(respAl.data) ? respAl.data : [];
+    const alumno = lista.find(a => (a.carnet||'').toString().trim() === decodedText.toString().trim());
+
+    setMensaje(`✅ Asistencia registrada para "${alumno?.nombre_completo || decodedText}"`);
+  } catch (err) {
+    if (err?.response?.status === 409 && err?.response?.data?.error === 'ya_registrado_hoy') {
+      // ya marcado hoy
+      // igual mostramos nombre
+      try {
+        const respAl = await axios.get(`${API_BASE}/api/alumnos`, { params: { q: decodedText }});
+        const lista = Array.isArray(respAl.data) ? respAl.data : [];
+        const alumno = lista.find(a => (a.carnet||'').toString().trim() === decodedText.toString().trim());
+        setMensaje(`ℹ️ Ya existe asistencia hoy para "${alumno?.nombre_completo || decodedText}"`);
+      } catch { setMensaje(`ℹ️ Ya existe asistencia hoy`); }
+    } else {
+      console.error(err);
+      setMensaje('⚠️ Error al registrar asistencia');
     }
-  };
+  }
+};
+
+
 
   useEffect(() => {
     if (!(mostrarQR && docente_id)) return;
