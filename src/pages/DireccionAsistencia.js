@@ -1,5 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import {
+
+  FiDownload,
+  FiCalendar,
+  FiUsers,
+  FiUser,
+  FiFilter,
+  FiSearch
+} from 'react-icons/fi';
+import '../styles/DireccionAsistencia.css';
 
 const API_BASE = 'http://localhost:4000';
 
@@ -35,6 +46,7 @@ export default function DireccionAsistencia(){
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
   const abortRef = useRef(null);
+  const navigate = useNavigate();
 
   const fetch = async () => {
     if (abortRef.current) abortRef.current.abort();
@@ -58,76 +70,123 @@ export default function DireccionAsistencia(){
     }
   };
 
-  // Carga inicial y cuando cambian filtros
+  // carga inicial + al cambiar filtros
   useEffect(()=>{ fetch(); /* eslint-disable-next-line */ }, [fecha, grado, docente, estado, q]);
-
-  // Auto-refresco cada 10s
-  useEffect(()=>{
-    const id = setInterval(fetch, 10000);
-    return () => clearInterval(id);
-  }, [fecha, grado, docente, estado, q]);
+  // auto-refresh cada 10s
+  useEffect(()=>{ const id = setInterval(fetch, 10000); return () => clearInterval(id); }, [fecha, grado, docente, estado, q]);
 
   const grados = useMemo(()=>Array.from(new Set(rows.map(r=>r.grado).filter(Boolean))).sort(),[rows]);
   const docentes = useMemo(()=>Array.from(new Set(rows.map(r=>(r.docente_nombre||'').trim()).filter(Boolean))).sort(),[rows]);
 
-  return (
-    <div className="page">
-      <div className="header" style={{marginBottom:12}}>
-        <h2>Asistencia — Dirección</h2>
-        <div className="results-pill">{rows.length} alumno(s)</div>
-      </div>
+  
+  
+return (
+  <div className="rd-wrap">
+    {/* Encabezado */}
+    <div className="rd-header">
+      <button
+        className="rd-back"
+        type="button"
+        onClick={() => navigate('/dashboard-direccion')}
+      >
+        ← Volver al Dashboard
+      </button>
 
-      {err && <div className="error-banner">{err}</div>}
+      <h2 className="rd-title">Asistencia General</h2>
+
+      <div className="header-actions">
+        <div className="results-pill" title="Cantidad de alumnos listados">
+          {rows.length} alumno(s)
+        </div>
+      </div>
+    </div>
+    
+
+      {err && <div className="error-banner" role="alert">{err}</div>}
 
       {/* Filtros */}
-      <div className="filters-card">
+      <form className="filters-card" onSubmit={(e)=>{e.preventDefault(); fetch();}}>
         <div className="filters-grid">
           <div className="field">
-            <label>Fecha</label>
-            <input type="date" value={fecha} onChange={e=>setFecha(e.target.value)} />
+            <label htmlFor="f-fecha">Fecha</label>
+            <div className="input-group">
+              <FiCalendar className="ig-icon" aria-hidden />
+              <input id="f-fecha" type="date" value={fecha} onChange={e=>setFecha(e.target.value)} />
+            </div>
           </div>
+
           <div className="field">
-            <label>Grado</label>
-            <select value={grado} onChange={e=>setGrado(e.target.value)}>
-              <option value="">Todos</option>
-              {grados.map(g=><option key={g} value={g}>{g}</option>)}
-            </select>
+            <label htmlFor="f-grado">Grado</label>
+            <div className="input-group">
+              <FiUsers className="ig-icon" aria-hidden />
+              <select id="f-grado" value={grado} onChange={e=>setGrado(e.target.value)}>
+                <option value="">Todos</option>
+                {grados.map(g=><option key={`g-${g}`} value={g}>{g}</option>)}
+              </select>
+            </div>
           </div>
+
           <div className="field">
-            <label>Docente</label>
-            <select value={docente} onChange={e=>setDocente(e.target.value)}>
-              <option value="">Todos</option>
-              {docentes.map(d=><option key={d} value={d}>{d}</option>)}
-            </select>
+            <label htmlFor="f-docente">Docente</label>
+            <div className="input-group">
+              <FiUser className="ig-icon" aria-hidden />
+              <select id="f-docente" value={docente} onChange={e=>setDocente(e.target.value)}>
+                <option value="">Todos</option>
+                {docentes.map(d=><option key={`d-${d}`} value={d}>{d}</option>)}
+              </select>
+            </div>
           </div>
+
           <div className="field">
-            <label>Estado</label>
-            <select value={estado} onChange={e=>setEstado(e.target.value)}>
-              {ESTADOS.map(eo => <option key={eo.v} value={eo.v}>{eo.label}</option>)}
-            </select>
+            <label htmlFor="f-estado">Estado</label>
+            <div className="input-group">
+              <FiFilter className="ig-icon" aria-hidden />
+              <select id="f-estado" value={estado} onChange={e=>setEstado(e.target.value)}>
+                {ESTADOS.map(eo => <option key={`e-${eo.v}`} value={eo.v}>{eo.label}</option>)}
+              </select>
+            </div>
           </div>
-          <div className="field">
-            <label>Buscar</label>
-            <input placeholder="Nombre o carnet" value={q} onChange={e=>setQ(e.target.value)} />
+
+          <div className="field field-full">
+            <label htmlFor="f-buscar">Buscar</label>
+            <div className="input-group">
+              <FiSearch className="ig-icon" aria-hidden />
+              <input
+                id="f-buscar"
+                placeholder="Nombre o carnet"
+                value={q}
+                onChange={e=>setQ(e.target.value)}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="filters-actions" style={{gap:8}}>
-          <button className="btn secondary" onClick={()=>{
-            setGrado(''); setDocente(''); setEstado(''); setQ('');
-          }}>
+        <div className="filters-actions">
+          <button
+            type="button"
+            className="btn secondary"
+            onClick={()=>{ setGrado(''); setDocente(''); setEstado(''); setQ(''); }}
+          >
             Limpiar filtros
           </button>
-          <button className="btn" onClick={fetch} disabled={loading}>
+
+          <button type="submit" className="btn primary" disabled={loading}>
             {loading ? 'Actualizando…' : 'Actualizar'}
           </button>
-          <button className="btn" onClick={()=>exportCSV(rows, fecha)} disabled={!rows.length}>
-            Exportar CSV
+
+          <button
+            type="button"
+            className="btn export"
+            onClick={()=>exportCSV(rows, fecha)}
+            disabled={!rows.length}
+            title="Exportar CSV"
+          >
+            <FiDownload style={{marginRight:6}}/> Exportar CSV
           </button>
         </div>
-      </div>
+      </form>
 
-      {/* Tabla (solo lectura) */}
+      {/* Tabla */}
       {loading ? <p className="loading">Cargando…</p> : (
         rows.length ? (
           <div className="table-wrapper">
@@ -143,8 +202,8 @@ export default function DireccionAsistencia(){
                 </tr>
               </thead>
               <tbody>
-                {rows.map(r=>(
-                  <tr key={r.alumno_id}>
+                {rows.map((r, idx)=>(
+                  <tr key={`${r.alumno_id ?? 'na'}-${r.carnet ?? 'noc'}-${idx}`}>
                     <td>{r.nombre_completo}</td>
                     <td>{r.carnet}</td>
                     <td>{r.grado}</td>

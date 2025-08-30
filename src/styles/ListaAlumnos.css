@@ -1,108 +1,130 @@
+/* Contenedor principal */
 .lista-alumnos-container {
-  max-width: 900px;
-  margin: 3rem auto;
-  padding: 2rem 2.5rem;
+  max-width: 980px;
+  margin: 2.2rem auto;
+  padding: 1.6rem 1.8rem;
   background-color: #faf7fc;
-  border-radius: 1rem;
+  border-radius: 16px;
   box-shadow: 0 8px 20px rgba(91, 59, 138, 0.1);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #4b347d;
-  user-select: none;
+  animation: fadeInUp 0.6s ease forwards;
 }
 
-.lista-alumnos-container h1 {
-  text-align: center;
-  font-weight: 700;
-  font-size: 2.4rem;
-  margin-bottom: 2.5rem;
+/* Header con botón y título alineados como en otras vistas */
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 1.2rem;
+}
+
+.titulo-pagina {
+  margin: 0;
+  font-weight: 800;
+  font-size: clamp(1.4rem, 1.2rem + 1.2vw, 2rem);
   color: #5b3b8a;
 }
 
-.botones-navegacion {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.botones-navegacion button {
-  background: #cbb9e3;
-  border: none;
-  padding: 0.75rem 2.2rem;
-  border-radius: 30px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #6a4ca1;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(91, 59, 138, 0.2);
-  transition: background-color 0.3s ease, color 0.3s ease;
-  user-select: none;
-}
-
-.botones-navegacion button:hover,
-.botones-navegacion button:focus {
-  background-color: #8e6ad8;
-  color: #fff;
-  outline: none;
-  box-shadow: 0 8px 24px rgba(111, 66, 193, 0.4);
-}
-
-.botones-navegacion button.activo {
-  background: linear-gradient(135deg, #6f42c1, #a26dd9);
-  color: white;
-  box-shadow: 0 10px 30px rgba(111, 66, 193, 0.6);
-}
-
-.vista-activa {
-  animation: fadeInUp 0.8s ease forwards;
-}
-
-/* Animación fadeInUp */
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .botones-navegacion {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .botones-navegacion button {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-  }
-}
-
-
+/* Botón volver igual que en las demás pantallas */
 .btn-volver {
-  background-color: #6f42c1;
-  color: white;
+  background-color: #7c6adf;
+  color: #fff;
   border: none;
-  padding: 0.5rem 1.2rem;
-  border-radius: 30px;
+  padding: 0.55rem 1.1rem;
+  border-radius: 12px;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  margin-bottom: 1.8rem;
-  box-shadow: 0 6px 18px rgba(111, 66, 193, 0.4);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 18px rgba(111, 66, 193, 0.25);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.08s ease;
   user-select: none;
-  display: inline-block;
 }
-
 .btn-volver:hover,
 .btn-volver:focus {
   background-color: #8e6ad8;
   outline: none;
-  box-shadow: 0 8px 24px rgba(142, 106, 216, 0.6);
+  box-shadow: 0 8px 24px rgba(142, 106, 216, 0.45);
+}
+.btn-volver:active { transform: translateY(1px); }
+
+/* Tabs / navegación */
+.botones-navegacion {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 0.8rem 0 1.6rem;
+}
+
+.tab-btn {
+  background: #e8def7;
+  border: 1px solid #d7c8f2;
+  padding: 0.6rem 1.3rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #6a4ca1;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(91, 59, 138, 0.14);
+  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.06s ease;
+  user-select: none;
+}
+.tab-btn:hover,
+.tab-btn:focus {
+  background-color: #cdbbf0;
+  color: #4a2c88;
+  outline: none;
+  box-shadow: 0 6px 18px rgba(111, 66, 193, 0.3);
+}
+.tab-btn:active { transform: translateY(1px); }
+
+.tab-btn.activo {
+  background: linear-gradient(135deg, #6f42c1, #a26dd9);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 10px 26px rgba(111, 66, 193, 0.5);
+}
+
+/* Panel activo */
+.vista-activa {
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+/* Animación */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive tweaks */
+@media (max-width: 720px) {
+  .lista-alumnos-container {
+    margin: 1.2rem 1rem;
+    padding: 1rem 1.1rem;
+  }
+
+  .header-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+
+  .btn-volver {
+    order: 1;
+  }
+  .titulo-pagina {
+    order: 2;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .tab-btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.65rem 1rem;
+  }
 }

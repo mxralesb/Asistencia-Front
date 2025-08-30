@@ -45,7 +45,6 @@ function exportarCSV(rows, filenameBase = 'alumnos') {
   URL.revokeObjectURL(url);
 }
 
-/* Debounce simple */
 function useDebouncedValue(value, delay = 250) {
   const [v, setV] = useState(value);
   useEffect(() => {
@@ -55,7 +54,7 @@ function useDebouncedValue(value, delay = 250) {
   return v;
 }
 
-/* Util: ordenamiento */
+
 const sorters = {
   nombre_completo: (a, b) => (a?.nombre_completo || '').localeCompare(b?.nombre_completo || '', 'es'),
   carnet:         (a, b) => (a?.carnet || '').localeCompare(b?.carnet || '', 'es'),
@@ -192,7 +191,7 @@ const ConsultaAlumnos = () => {
             <FiRefreshCw style={{ marginRight: 6 }} /> Recargar
           </button>
 
-        <div className="results-pill">{alumnosFiltrados.length} resultado(s)</div>
+          <div className="results-pill">{alumnosFiltrados.length} resultado(s)</div>
         </div>
       </div>
 
@@ -215,7 +214,7 @@ const ConsultaAlumnos = () => {
             >
               <option value="">Todos</option>
               {maestrosUnicos.map(m => (
-                <option key={m} value={m.toLowerCase()}>{m}</option>
+                <option key={`m-${m}`} value={m.toLowerCase()}>{m}</option>
               ))}
             </select>
           </div>
@@ -229,7 +228,7 @@ const ConsultaAlumnos = () => {
             >
               <option value="">Todos</option>
               {gradosUnicos.map(g => (
-                <option key={g} value={g.toLowerCase()}>{g}</option>
+                <option key={`g-${g}`} value={g.toLowerCase()}>{g}</option>
               ))}
             </select>
           </div>
@@ -302,8 +301,8 @@ const ConsultaAlumnos = () => {
               </tr>
             </thead>
             <tbody>
-              {alumnosFiltrados.map((al) => (
-                <tr key={al.id}>
+              {alumnosFiltrados.map((al, idx) => (
+                <tr key={`${al.id ?? 'noid'}-${al.carnet ?? 'nocarnet'}-${idx}`}>
                   <td>{al.nombre_completo}</td>
                   <td>{al.carnet}</td>
                   <td>{al.grado}</td>
@@ -312,7 +311,7 @@ const ConsultaAlumnos = () => {
                       {al.activo ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
-                  <td>{al.docente_nombre || '—'}</td>
+                    <td>{al.docente_nombre || '—'}</td>
                   <td>
                     {al.qr_codigo ? (
                       <img

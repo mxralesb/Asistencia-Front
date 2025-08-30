@@ -7,42 +7,45 @@ import '../styles/ListaAlumnos.css';
 const ListaAlumnos = () => {
   const [vista, setVista] = useState('registro');
   const navigate = useNavigate();
-
-  return (
-    <div className="lista-alumnos-container">
-      <button
-        className="btn-volver"
-        onClick={() => navigate('/dashboard-direccion')}
-        aria-label="Volver al dashboard"
-      >
+return (
+    <div className="rd-wrap">
+      <button className="rd-back" type="button" onClick={() => navigate('/dashboard-direccion')}>
         ← Volver al Dashboard
       </button>
 
-      <h1>Gestión de Alumnos</h1>
+      <h2 className="rd-title">Gestion de alumnos</h2>
 
-      <nav className="botones-navegacion" role="tablist" aria-label="Navegación de vistas">
+
+      {/* Tabs de navegación */}
+      <nav
+        className="botones-navegacion"
+        role="tablist"
+        aria-label="Navegación de vistas"
+      >
         <button
           role="tab"
           aria-selected={vista === 'registro'}
           aria-controls="registro-panel"
           id="registro-tab"
-          className={vista === 'registro' ? 'activo' : ''}
+          className={`tab-btn ${vista === 'registro' ? 'activo' : ''}`}
           onClick={() => setVista('registro')}
         >
           Registrar Alumno
         </button>
+
         <button
           role="tab"
           aria-selected={vista === 'consulta'}
           aria-controls="consulta-panel"
           id="consulta-tab"
-          className={vista === 'consulta' ? 'activo' : ''}
+          className={`tab-btn ${vista === 'consulta' ? 'activo' : ''}`}
           onClick={() => setVista('consulta')}
         >
           Consultar Alumnos
         </button>
       </nav>
 
+      {/* Paneles */}
       <section
         id="registro-panel"
         role="tabpanel"

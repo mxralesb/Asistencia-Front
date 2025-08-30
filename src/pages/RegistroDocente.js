@@ -1,219 +1,278 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import {
+  FiUser,
+  FiMail,
+  FiPhone,
+  FiHome,
+  FiBookOpen,
+  FiLayers,
+  FiChevronDown,
+} from 'react-icons/fi';
 import '../styles/RegistrarDocente.css';
 
-const gradosDisponibles = [
+const API_BASE = 'http://localhost:4000';
+
+const GRADOS = [
   'Primero Básico',
   'Segundo Básico',
   'Tercero Básico',
   'Cuarto Bachillerato',
-  'Quinto Bachillerato'
+  'Quinto Bachillerato',
 ];
 
-const especialidadesDisponibles = [
+const ESPECIALIDADES = [
   'Matemática',
   'Lenguaje',
   'Ciencias Naturales',
   'Ciencias Sociales',
   'Computación',
   'Inglés',
-  'Educación Física'
+  'Educación Física',
 ];
 
-const RegistrarDocente = () => {
-  const navigate = useNavigate();
+const initForm = {
+  nombre: '',
+  correo: '',
+  telefono: '',
+  direccion: '',
+  especialidad: '',
+  grado: '',
+};
 
-  const [form, setForm] = useState({
-    nombre: '',
-    correo: '',
-    telefono: '',
-    direccion: '',
-    especialidad: '',
-    grado: '',
+const emailIsGmail = (v) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(v);
+const telIsValid  = (v) => /^\d{0,8}$/.test(v);
+
+export default function RegistrarDocente() {
+  const navigate = useNavigate();
+  const [form, setForm] = useState(initForm);
+  const [touched, setTouched] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const [modal, setModal] = useState({
+    open: false,
+    docente: null,
   });
 
-  const [errorCorreo, setErrorCorreo] = useState('');
-  const [errorTelefono, setErrorTelefono] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [docenteGuardado, setDocenteGuardado] = useState(null);
+  const errors = useMemo(() => {
+    const e = {};
+    if (!form.nombre.trim()) e.nombre = 'Requerido';
+    if (!emailIsGmail(form.correo)) e.correo = 'Debe ser @gmail.com';
+    if (!telIsValid(form.telefono)) e.telefono = 'Solo números (máx. 8)';
+    if (!form.especialidad) e.especialidad = 'Seleccione una';
+    if (!form.grado) e.grado = 'Seleccione un grado';
+    // dirección no obligatoria
+    return e;
+  }, [form]);
 
-  const validarCorreoGmail = (email) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
-  const validarTelefono = (telefono) => /^\d{0,8}$/.test(telefono);
+  const isValid = useMemo(() => Object.keys(errors).length === 0, [errors]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === 'correo') {
-      setForm(prev => ({ ...prev, correo: value }));
-      setErrorCorreo(validarCorreoGmail(value) ? '' : 'El correo debe ser un Gmail válido (@gmail.com)');
-    } else if (name === 'telefono') {
-      if (validarTelefono(value)) {
-        setForm(prev => ({ ...prev, telefono: value }));
-        setErrorTelefono('');
-      } else {
-        setErrorTelefono('El teléfono debe contener solo números y máximo 8 dígitos');
-      }
-    } else {
-      setForm(prev => ({ ...prev, [name]: value }));
-    }
+  const handleChange = (name) => (e) => {
+    let value = e.target.value;
+    if (name === 'telefono' && !telIsValid(value)) return; // bloquea caracteres extra
+    setForm((p) => ({ ...p, [name]: value }));
   };
+
+  const handleBlur = (name) => () => setTouched((p) => ({ ...p, [name]: true }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validarCorreoGmail(form.correo) || !validarTelefono(form.telefono)) return;
+    setTouched({
+      nombre: true,
+      correo: true,
+      telefono: true,
+      especialidad: true,
+      grado: true,
+      direccion: true,
+    });
+    if (!isValid) return;
 
     try {
-      // Guardar en la BD
-      const response = await axios.post('http://localhost:4000/api/usuarios/registro-docente', {
+      setSubmitting(true);
+      const { data } = await axios.post(`${API_BASE}/api/usuarios/registro-docente`, {
         ...form,
-        rol: 'docente'
+        rol: 'docente',
       });
 
-      // Guardar datos para el modal
-      setDocenteGuardado({
-        ...form,
-        id: response.data.id || 'N/A', // si tu backend devuelve id
+      setModal({
+        open: true,
+        docente: {
+          id: data?.id ?? '—',
+          ...form,
+        },
       });
-
-      // Mostrar modal resumen
-      setShowModal(true);
-
-      // Limpiar formulario
-      setForm({
-        nombre: '',
-        correo: '',
-        telefono: '',
-        direccion: '',
-        especialidad: '',
-        grado: '',
-      });
-      setErrorCorreo('');
-      setErrorTelefono('');
+      setForm(initForm);
+      setTouched({});
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.mensaje || 'Error al registrar docente');
+      const msg = err?.response?.data?.mensaje || 'Error al registrar docente';
+      alert(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="form-container">
-      <button
-        className="btn-volver"
-        onClick={() => navigate('/dashboard-direccion')}
-      >
+    <div className="rd-wrap">
+      <button className="rd-back" type="button" onClick={() => navigate('/dashboard-direccion')}>
         ← Volver al Dashboard
       </button>
 
-      <h2>Registrar Docente</h2>
-      <form onSubmit={handleSubmit} noValidate>
-        <div className="form-group">
-          <label>Nombre completo</label>
-          <input
-            type="text"
-            name="nombre"
-            value={form.nombre}
-            onChange={handleChange}
-            required
-          />
+      <h2 className="rd-title">Registro nuevo docente</h2>
+
+      <form className="rd-form" onSubmit={handleSubmit} noValidate>
+        {/* Nombre */}
+        <div className="rd-field">
+          <label className="rd-label">
+            Nombre completo <span className="req">*</span>
+          </label>
+          <div className="input-icon">
+            <FiUser aria-hidden className="icon" />
+            <input
+              type="text"
+              placeholder="Ej. Juan Pérez"
+              value={form.nombre}
+              onChange={handleChange('nombre')}
+              onBlur={handleBlur('nombre')}
+              aria-invalid={touched.nombre && !!errors.nombre}
+            />
+          </div>
+          {touched.nombre && errors.nombre && <p className="rd-error">{errors.nombre}</p>}
         </div>
 
-        <div className="form-group">
-          <label>Correo institucional</label>
-          <input
-            type="email"
-            name="correo"
-            value={form.correo}
-            onChange={handleChange}
-            required
-            placeholder="ejemplo@gmail.com"
-          />
-          {errorCorreo && <p className="message error">{errorCorreo}</p>}
+        {/* Correo */}
+        <div className="rd-field">
+          <label className="rd-label">
+            Correo institucional <span className="req">*</span>
+          </label>
+          <div className="input-icon">
+            <FiMail aria-hidden className="icon" />
+            <input
+              type="email"
+              placeholder="ejemplo@gmail.com"
+              value={form.correo}
+              onChange={handleChange('correo')}
+              onBlur={handleBlur('correo')}
+              aria-invalid={touched.correo && !!errors.correo}
+            />
+          </div>
+          {touched.correo && errors.correo && <p className="rd-error">{errors.correo}</p>}
         </div>
 
-        <div className="form-group">
-          <label>Teléfono</label>
-          <input
-            type="text"
-            name="telefono"
-            value={form.telefono}
-            onChange={handleChange}
-            maxLength="8"
-            placeholder="Solo números, máximo 8 dígitos"
-          />
-          {errorTelefono && <p className="message error">{errorTelefono}</p>}
+        {/* Teléfono */}
+        <div className="rd-field">
+          <label className="rd-label">
+            Teléfono <span className="req">*</span>
+          </label>
+          <div className="input-icon">
+            <FiPhone aria-hidden className="icon" />
+            <input
+              inputMode="numeric"
+              maxLength={8}
+              placeholder="12345678"
+              value={form.telefono}
+              onChange={handleChange('telefono')}
+              onBlur={handleBlur('telefono')}
+              aria-invalid={touched.telefono && !!errors.telefono}
+            />
+          </div>
+          {touched.telefono && errors.telefono && <p className="rd-error">{errors.telefono}</p>}
         </div>
 
-        <div className="form-group">
-          <label>Dirección</label>
-          <input
-            type="text"
-            name="direccion"
-            value={form.direccion}
-            onChange={handleChange}
-          />
+        {/* Dirección (opcional) */}
+        <div className="rd-field">
+          <label className="rd-label">Dirección</label>
+          <div className="input-icon">
+            <FiHome aria-hidden className="icon" />
+            <input
+              type="text"
+              placeholder="Ciudad, Zona, Colonia"
+              value={form.direccion}
+              onChange={handleChange('direccion')}
+              onBlur={handleBlur('direccion')}
+            />
+          </div>
         </div>
 
-        <div className="form-group">
-          <label>Especialidad</label>
-          <select
-            name="especialidad"
-            value={form.especialidad}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccione una especialidad</option>
-            {especialidadesDisponibles.map((esp, idx) => (
-              <option key={idx} value={esp}>{esp}</option>
-            ))}
-          </select>
+        {/* Especialidad */}
+        <div className="rd-field">
+          <label className="rd-label">
+            Especialidad <span className="req">*</span>
+          </label>
+          <div className="select-icon">
+            <FiBookOpen aria-hidden className="icon" />
+            <select
+              value={form.especialidad}
+              onChange={handleChange('especialidad')}
+              onBlur={handleBlur('especialidad')}
+              aria-invalid={touched.especialidad && !!errors.especialidad}
+            >
+              <option value="">Seleccione</option>
+              {ESPECIALIDADES.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <FiChevronDown aria-hidden className="chev" />
+          </div>
+          {touched.especialidad && errors.especialidad && (
+            <p className="rd-error">{errors.especialidad}</p>
+          )}
         </div>
 
-        <div className="form-group">
-          <label>Grado asignado</label>
-          <select
-            name="grado"
-            value={form.grado}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccione un grado</option>
-            {gradosDisponibles.map((grado, idx) => (
-              <option key={idx} value={grado}>{grado}</option>
-            ))}
-          </select>
+        {/* Grado */}
+        <div className="rd-field">
+          <label className="rd-label">
+            Grado asignado <span className="req">*</span>
+          </label>
+          <div className="select-icon">
+            <FiLayers aria-hidden className="icon" />
+            <select
+              value={form.grado}
+              onChange={handleChange('grado')}
+              onBlur={handleBlur('grado')}
+              aria-invalid={touched.grado && !!errors.grado}
+            >
+              <option value="">Seleccione</option>
+              {GRADOS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <FiChevronDown aria-hidden className="chev" />
+          </div>
+          {touched.grado && errors.grado && <p className="rd-error">{errors.grado}</p>}
         </div>
 
-        <button
-          type="submit"
-          className="btn-submit"
-          disabled={errorCorreo !== '' || errorTelefono !== ''}
-        >
-          Registrar Docente
-        </button>
+        <div className="rd-actions">
+          <button className="rd-submit" type="submit" disabled={!isValid || submitting}>
+            {submitting ? 'Registrando…' : 'Registrar Docente'}
+          </button>
+        </div>
       </form>
 
-      {/* Modal resumen */}
-      {showModal && docenteGuardado && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+      {/* Modal simple */}
+      {modal.open && modal.docente && (
+        <div className="rd-modal-overlay" onClick={() => setModal({ open: false, docente: null })}>
+          <div className="rd-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Docente registrado</h3>
             <ul>
-              <li><strong>ID:</strong> {docenteGuardado.id}</li>
-              <li><strong>Nombre:</strong> {docenteGuardado.nombre}</li>
-              <li><strong>Correo:</strong> {docenteGuardado.correo}</li>
-              <li><strong>Teléfono:</strong> {docenteGuardado.telefono || 'N/A'}</li>
-              <li><strong>Dirección:</strong> {docenteGuardado.direccion || 'N/A'}</li>
-              <li><strong>Especialidad:</strong> {docenteGuardado.especialidad}</li>
-              <li><strong>Grado:</strong> {docenteGuardado.grado}</li>
+              <li><strong>ID:</strong> {modal.docente.id}</li>
+              <li><strong>Nombre:</strong> {modal.docente.nombre}</li>
+              <li><strong>Correo:</strong> {modal.docente.correo}</li>
+              <li><strong>Teléfono:</strong> {modal.docente.telefono || '—'}</li>
+              <li><strong>Dirección:</strong> {modal.docente.direccion || '—'}</li>
+              <li><strong>Especialidad:</strong> {modal.docente.especialidad}</li>
+              <li><strong>Grado:</strong> {modal.docente.grado}</li>
             </ul>
-            <button onClick={() => setShowModal(false)}>Cerrar</button>
+            <button className="rd-modal-close" onClick={() => setModal({ open: false, docente: null })}>
+              Cerrar
+            </button>
           </div>
         </div>
       )}
     </div>
   );
-};
-
-export default RegistrarDocente;
+}

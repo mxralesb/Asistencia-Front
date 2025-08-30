@@ -21,10 +21,8 @@ function fireAlumnosChanged() {
 const RegistrarAlumno = () => {
   const [form, setForm] = useState({ nombre: '', carnet: '', grado: '' });
 
-  // Modal de éxito que ya tenías
   const [modal, setModal] = useState({ abierto: false, tipo: '', mensaje: '', resumen: null });
 
-  // 🔔 Modal de alerta para el 409 (sin docente)
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
 
@@ -52,7 +50,7 @@ const RegistrarAlumno = () => {
         carnet: form.carnet,
         grado: form.grado,
         activo: true,
-        // Si quisieras forzar docente: usuario_id: <id_docente>
+        
       });
 
       setModal({
@@ -69,11 +67,11 @@ const RegistrarAlumno = () => {
 
       setForm({ nombre: '', carnet: '', grado: '' });
 
-      // notifica a otras vistas que escuchan alumnos:changed (ConsultaAlumnos)
+    
       fireAlumnosChanged();
 
     } catch (error) {
-      // 👇 Detecta el 409 del backend cuando no hay docente para el grado
+     
       const status = error?.response?.status;
       const msg = error?.response?.data?.error || error?.response?.data?.mensaje;
 
@@ -86,7 +84,7 @@ const RegistrarAlumno = () => {
         return;
       }
 
-      // Otros errores (duplicado de carnet, etc.)
+    
       setModal({
         abierto: true,
         tipo: 'error',
@@ -177,7 +175,7 @@ const RegistrarAlumno = () => {
         </div>
       )}
 
-      {/* 🔔 Modal de alerta 409 (sin docente para el grado) */}
+  
       <AlertModal
         open={alertOpen}
         title="No hay docente para el grado"
