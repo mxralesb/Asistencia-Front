@@ -37,7 +37,6 @@ function App() {
         <Route path="/docente/reportes" element={<ReportesDocente />} />
         <Route path="/reportes-direccion" element={<ReportesDireccion />} />
 
-        {/* Alias para compatibilidad con /direccion/reportes */}
         <Route path="/direccion/reportes" element={<ReportesDireccion />} />
 
         {/* (Opcional) catch-all al login de dirección si navegan a algo de /direccion desconocido */}

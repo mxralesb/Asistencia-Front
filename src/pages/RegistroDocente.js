@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Select from 'react-select';
 import {
   FiUser,
   FiMail,
@@ -32,6 +33,9 @@ const ESPECIALIDADES = [
   'Educación Física',
 ];
 
+const GRADO_OPTS = GRADOS.map(g => ({ value: g, label: g }));
+const ESPEC_OPTS = ESPECIALIDADES.map(e => ({ value: e, label: e }));
+
 const initForm = {
   nombre: '',
   correo: '',
@@ -44,16 +48,61 @@ const initForm = {
 const emailIsGmail = (v) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(v);
 const telIsValid  = (v) => /^\d{0,8}$/.test(v);
 
+/* === Estilos morados para react-select (menú flotante bonito) === */
+const purpleSelectStyles = {
+  container: (b) => ({ ...b, width: '100%' }),
+  control: (base) => ({
+    ...base,
+    minHeight: 48,
+    border: 0,
+    boxShadow: 'none',
+    background: 'transparent',
+    cursor: 'pointer',
+  }),
+  valueContainer: (b) => ({ ...b, padding: '4px 8px 4px 2px' }),
+  input: (b) => ({ ...b, color: '#4a3e71' }),
+  singleValue: (b) => ({ ...b, color: '#4a3e71', fontWeight: 600 }),
+  placeholder: (b) => ({ ...b, color: '#8a7fc0', fontWeight: 600 }),
+  indicatorSeparator: () => ({ display: 'none' }),
+  dropdownIndicator: (b) => ({ ...b, color: '#6e57d1' }),
+  menuPortal: (b) => ({ ...b, zIndex: 9999 }),
+  menu: (b) => ({
+    ...b,
+    marginTop: 8,
+    borderRadius: 14,
+    overflow: 'hidden',
+    border: '1px solid #e8e1ff',
+    boxShadow: '0 18px 34px rgba(110,87,209,.20)',
+    backdropFilter: 'blur(4px)',
+  }),
+  menuList: (b) => ({
+    ...b,
+    padding: 6,
+    maxHeight: 220,
+  }),
+  option: (b, s) => ({
+    ...b,
+    borderRadius: 10,
+    padding: '10px 12px',
+    margin: '2px 0',
+    background: s.isSelected
+      ? 'linear-gradient(135deg,#6f42c1,#a26dd9)'
+      : s.isFocused
+      ? '#f3efff'
+      : '#fff',
+    color: s.isSelected ? '#fff' : '#4a3e71',
+    fontWeight: s.isSelected ? 700 : 600,
+    cursor: 'pointer',
+  }),
+};
+
 export default function RegistrarDocente() {
   const navigate = useNavigate();
   const [form, setForm] = useState(initForm);
   const [touched, setTouched] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  const [modal, setModal] = useState({
-    open: false,
-    docente: null,
-  });
+  const [modal, setModal] = useState({ open: false, docente: null });
 
   const errors = useMemo(() => {
     const e = {};
@@ -62,19 +111,19 @@ export default function RegistrarDocente() {
     if (!telIsValid(form.telefono)) e.telefono = 'Solo números (máx. 8)';
     if (!form.especialidad) e.especialidad = 'Seleccione una';
     if (!form.grado) e.grado = 'Seleccione un grado';
-    // dirección no obligatoria
     return e;
   }, [form]);
 
-  const isValid = useMemo(() => Object.keys(errors).length === 0, [errors]);
+  const isValid = Object.keys(errors).length === 0;
 
   const handleChange = (name) => (e) => {
     let value = e.target.value;
-    if (name === 'telefono' && !telIsValid(value)) return; // bloquea caracteres extra
+    if (name === 'telefono' && !telIsValid(value)) return;
     setForm((p) => ({ ...p, [name]: value }));
   };
 
-  const handleBlur = (name) => () => setTouched((p) => ({ ...p, [name]: true }));
+  const handleBlur = (name) => () =>
+    setTouched((p) => ({ ...p, [name]: true }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -201,20 +250,19 @@ export default function RegistrarDocente() {
           </label>
           <div className="select-icon">
             <FiBookOpen aria-hidden className="icon" />
-            <select
-              value={form.especialidad}
-              onChange={handleChange('especialidad')}
+            <Select
+              classNamePrefix="rs"
+              instanceId="especialidad"
+              styles={purpleSelectStyles}
+              options={ESPEC_OPTS}
+              value={form.especialidad ? { value: form.especialidad, label: form.especialidad } : null}
+              onChange={(opt) => setForm(p => ({ ...p, especialidad: opt?.value || '' }))}
               onBlur={handleBlur('especialidad')}
-              aria-invalid={touched.especialidad && !!errors.especialidad}
-            >
-              <option value="">Seleccione</option>
-              {ESPECIALIDADES.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-            <FiChevronDown aria-hidden className="chev" />
+              placeholder="Seleccione"
+              isSearchable
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
+            />
           </div>
           {touched.especialidad && errors.especialidad && (
             <p className="rd-error">{errors.especialidad}</p>
@@ -228,20 +276,19 @@ export default function RegistrarDocente() {
           </label>
           <div className="select-icon">
             <FiLayers aria-hidden className="icon" />
-            <select
-              value={form.grado}
-              onChange={handleChange('grado')}
+            <Select
+              classNamePrefix="rs"
+              instanceId="grado"
+              styles={purpleSelectStyles}
+              options={GRADO_OPTS}
+              value={form.grado ? { value: form.grado, label: form.grado } : null}
+              onChange={(opt) => setForm(p => ({ ...p, grado: opt?.value || '' }))}
               onBlur={handleBlur('grado')}
-              aria-invalid={touched.grado && !!errors.grado}
-            >
-              <option value="">Seleccione</option>
-              {GRADOS.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-            <FiChevronDown aria-hidden className="chev" />
+              placeholder="Seleccione"
+              isSearchable
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
+            />
           </div>
           {touched.grado && errors.grado && <p className="rd-error">{errors.grado}</p>}
         </div>

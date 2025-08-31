@@ -293,3 +293,23 @@ select:focus {
 .btn-close:hover {
   background-color: #ccc;
 }
+
+
+/* Asegura misma altura y look entre inputs y react-select */
+.field {
+  height: 48px;                 /* igual a react-select */
+  line-height: 48px;
+}
+
+.rs__control {                  /* react-select (prefijo classNamePrefix="rs") */
+  min-height: 48px !important;
+}
+.rs__value-container { padding: 4px 10px !important; }
+
+/* Mensaje de error pequeño debajo del campo */
+.field-error {
+  margin: 6px 2px 10px;
+  color: #b64242;
+  font-weight: 600;
+  font-size: .9rem;
+}

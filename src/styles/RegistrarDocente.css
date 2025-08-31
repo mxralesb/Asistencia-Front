@@ -9,7 +9,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Back button */
+/* Botón volver */
 .rd-back {
   background: #7c6adf;
   color: #fff;
@@ -24,7 +24,7 @@
 }
 .rd-back:hover { background: #5e4fc1; box-shadow: 0 8px 22px rgba(94,79,193,.45); transform: translateY(-1px); }
 
-/* Title */
+/* Título */
 .rd-title {
   text-align: center;
   color: #4a3e71;
@@ -33,14 +33,27 @@
   margin: .5rem 0 1.6rem 0;
 }
 
-/* Form grid (2 cols) */
+/* Grid del formulario */
 .rd-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(280px, 1fr));
   gap: 1.25rem 1.25rem;
 }
 
-/* One field */
+/* ====== RESET LOCAL (evita bordes/fondos internos) ====== */
+.rd-form input,
+.rd-form select {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none;
+  font-size: 1rem;
+  color: #4a3e71;
+}
+
+/* Campo */
 .rd-field { display: flex; flex-direction: column; }
 
 /* Label */
@@ -51,7 +64,7 @@
 }
 .req { color: #8a6df0; }
 
-/* Icon + input (FLEX, no absolute) */
+/* Input con icono */
 .input-icon {
   display: flex;
   align-items: center;
@@ -67,14 +80,10 @@
   color: #6e57d1;
   flex-shrink: 0;
 }
-.input-icon input {
+.input-icon > input {
   flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #4a3e71;
-  font-size: 1rem;
   padding: .2rem 0;
+  min-width: 0;
 }
 
 /* Select con icono */
@@ -94,15 +103,12 @@
   color: #6e57d1;
   flex-shrink: 0;
 }
-.select-icon select {
+.select-icon > select {
   flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #4a3e71;
-  font-size: 1rem;
-  padding: .2rem 0;
-  appearance: none;
+  padding: .2rem 2rem .2rem 0; /* espacio para el chevron */
+  min-width: 0;
+  background: transparent !important;
+  border: none !important;
 }
 .select-icon .chev {
   position: absolute;
@@ -119,7 +125,7 @@
   background: #ffffff;
 }
 
-/* Validation message (only when invalid & touched) */
+/* Error */
 .rd-error {
   color: #b64242;
   font-weight: 600;
@@ -127,7 +133,7 @@
   margin-top: .45rem;
 }
 
-/* Actions */
+/* Acciones */
 .rd-actions {
   grid-column: 1 / -1;
   margin-top: .5rem;
@@ -174,3 +180,143 @@
 @media (max-width: 860px) {
   .rd-form { grid-template-columns: 1fr; }
 }
+
+/* Normalizar inputs y selects */
+.rd-form input,
+.rd-form select {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none;
+  font-size: 1rem;
+  color: #4a3e71;
+  width: 100%;              /* todos ocupan el 100% del wrapper */
+  height: 42px;             /* altura fija uniforme */
+  line-height: 42px;        /* centra verticalmente el texto */
+  box-sizing: border-box;
+}
+
+/* Input con icono */
+.input-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9f8fd;
+  border: 1.8px solid #c6bff3;
+  border-radius: 12px;
+  padding: 0 0.95rem;        /* ajustado para no variar altura */
+  min-height: 42px;          /* fuerza la misma altura */
+  transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
+}
+.input-icon .icon {
+  font-size: 18px;
+  color: #6e57d1;
+  flex-shrink: 0;
+}
+
+/* Select con icono */
+.select-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9f8fd;
+  border: 1.8px solid #c6bff3;
+  border-radius: 12px;
+  padding: 0 0.95rem;
+  position: relative;
+  min-height: 42px;          /* misma altura */
+  transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
+}
+.select-icon > select {
+  flex: 1;
+  padding: 0;                /* se ajusta con la altura */
+  line-height: 42px;
+}
+.select-icon .chev {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: #6e57d1;
+}
+
+select option {
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  background: #fff;
+  color: #4a3e71;
+}
+
+/* Opciones al pasar el mouse (solo algunos navegadores lo aplican) */
+select option:hover {
+  background: #f1effa;
+}
+
+/* ====== Opciones más bonitas ====== */
+select option {
+  font-size: 1rem;
+  padding: 10px 14px;
+  color: #4a3e71;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+/* Alternar colores en las filas */
+select option:nth-child(even) {
+  background: #f9f8fd;
+}
+
+/* Al pasar el mouse (funciona en algunos navegadores como Firefox/Chromium) */
+select option:hover {
+  background: #efe9fb;
+  color: #5b3b8a;
+  cursor: pointer;
+}
+
+
+.select-icon { min-height: 48px; }
+.select-icon .icon { margin-left: 2px; }
+
+/* Wrapper del select con icono (mantiene el marco bonito) */
+.select-icon {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: center;
+  gap: 10px;
+  background: #f9f8fd;
+  border: 1.8px solid #c6bff3;
+  border-radius: 12px;
+  padding: 0.35rem 0.6rem; /* un poco más compacto */
+  transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
+}
+.select-icon .icon { color: #6e57d1; }
+
+/* Foco del wrapper (react-select ya no tiene borde propio) */
+.select-icon:focus-within {
+  border-color: #6e57d1;
+  box-shadow: 0 0 0 4px rgba(110,87,209,.20);
+  background: #ffffff;
+}
+
+/* Corrige el alto mínimo para que coincida con los inputs */
+.select-icon .rs__control {
+  min-height: 40px;  /* el styles ya fuerza 48, esto asegura consistencia si cambia */
+}
+.select-icon .rs__value-container { padding-left: 0; }
+
+/* Menú y opciones (namespace rs__) */
+.rs__menu { overflow: hidden; }
+.rs__option { transition: transform .08s ease; }
+.rs__option--is-focused { transform: translateX(2px); }
+
+/* Scrollbar del menú (WebKit) */
+.rs__menu-list::-webkit-scrollbar { width: 8px; }
+.rs__menu-list::-webkit-scrollbar-thumb {
+  background: #d9d0ff;
+  border-radius: 8px;
+}
+.rs__menu-list::-webkit-scrollbar-thumb:hover { background: #c7bbff; }
+
+/* Firefox scrollbar */
+.rs__menu-list { scrollbar-width: thin; scrollbar-color: #d9d0ff transparent; }
